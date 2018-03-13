@@ -112,7 +112,8 @@ function loopy(t) {
 
   // E key to gen new chunk
   if (controls.keys.isDown(69)) {
-    keys[69] = false;
+    controls.keys[69] = false;
+    console.log("rch")
     world.rechunk(Math.random() * 0.2);
   }
 
