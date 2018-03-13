@@ -53,21 +53,60 @@ class Player {
 
     // Check 12 points xo, yo (top, mid, bottom), zo against world.
     // TODO: this is super in-efficient! Fix it!
+
+    /*
+      Collisions with voxels is the same as "wallsliding collision detction"
+      from 2D games. Because it's a regular grid, it works the same way - only
+      with an extra dimension.
+
+      First figure out how much you WANT to move by for the current frame.
+      For example:
+      const xo = 0.1;
+      const yo = -0.1;
+      const zo = 0;
+
+      The player want to move to the right (from a keypress), and down (probably
+      becaues of gravity).
+
+      Now we need to determine how much they are ALLOWED to move along each axis.
+
+      First check the x dimension. If the current positoin PLUS the amount the
+      player wants to move along the X axis is a solid block, then disallow that
+      moement and reset xo to 0.
+      if (!getWorldCell(x + xo, y, z)) xo = 0;
+
+      Then do the same again on the Z axis. Notice this time we use the `xo` amount
+      too, as it has either been allowed, or reset to 0 in the previous step:
+      if (!getWorldCell(x + xo, y, z + zo)) zo = 0;
+
+      Finally, do the same with Y:
+      if (!getWorldCell(x + xo, y + yo, z + zo)) yo = 0;
+
+
+      That's the idea: but that assumes the player is a POINT withouth widht or height!
+      You need to check all the corners of the player - and also the middle (otherwise
+      they could jump through a solitary floating cube if their head doesn't hit AND their
+      feet don't fit.)
+
+      The way I've done it below is horrible, I will clean it up and refactor it after
+      I figure out some better lighting... priorities!
+
+    */
     const w = this.w / 2;
     const h = this.h / 2;
     [
-      { x: pos.x - w, y: pos.y - h, z: pos.z - w, g: true },
-      { x: pos.x + w, y: pos.y - h, z: pos.z - w, g: true },
-      { x: pos.x - w, y: pos.y - h, z: pos.z + w, g: true },
-      { x: pos.x + w, y: pos.y - h, z: pos.z + w, g: true },
-      { x: pos.x - w, y: pos.y + 0, z: pos.z - w, m: true },
-      { x: pos.x + w, y: pos.y + 0, z: pos.z - w, m: true },
-      { x: pos.x - w, y: pos.y + 0, z: pos.z + w, m: true },
-      { x: pos.x + w, y: pos.y + 0, z: pos.z + w, m: true },
-      { x: pos.x - w, y: pos.y + h, z: pos.z - w, t: true },
-      { x: pos.x + w, y: pos.y + h, z: pos.z - w, t: true },
-      { x: pos.x - w, y: pos.y + h, z: pos.z + w, t: true },
-      { x: pos.x + w, y: pos.y + h, z: pos.z + w, t: true }
+      { x: pos.x - w, y: pos.y - h, z: pos.z - w },
+      { x: pos.x + w, y: pos.y - h, z: pos.z - w },
+      { x: pos.x - w, y: pos.y - h, z: pos.z + w },
+      { x: pos.x + w, y: pos.y - h, z: pos.z + w },
+      { x: pos.x - w, y: pos.y + 0, z: pos.z - w },
+      { x: pos.x + w, y: pos.y + 0, z: pos.z - w },
+      { x: pos.x - w, y: pos.y + 0, z: pos.z + w },
+      { x: pos.x + w, y: pos.y + 0, z: pos.z + w },
+      { x: pos.x - w, y: pos.y + h, z: pos.z - w, top: true },
+      { x: pos.x + w, y: pos.y + h, z: pos.z - w, top: true },
+      { x: pos.x - w, y: pos.y + h, z: pos.z + w, top: true },
+      { x: pos.x + w, y: pos.y + h, z: pos.z + w, top: true }
     ].forEach(({ x, y, z, g, m, t }) => {
       let block;
       if (xo != 0 && world.getCell(x + xo, y, z)) xo = 0;
@@ -75,7 +114,7 @@ class Player {
       if (yo != 0 && world.getCell(x + xo, y + yo, z + zo)) {
         // TODO: NOPe, need to check under feet "isOnGround"...
         // Issue is hits and falling: won't slide. Ray cast it.
-        if (t || vel.y <= 0) {
+        if (top || vel.y <= 0) {
           yo = 0;
           vel.y = 0;
         }
