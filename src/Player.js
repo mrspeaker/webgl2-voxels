@@ -65,12 +65,12 @@ class Player {
       const yo = -0.1;
       const zo = 0;
 
-      The player want to move to the right (from a keypress), and down (probably
+      The player wants to move to the right (from a keypress), and down (probably
       becaues of gravity).
 
       Now we need to determine how much they are ALLOWED to move along each axis.
 
-      First check the x dimension. If the current positoin PLUS the amount the
+      First check the x dimension. If the current position PLUS the amount the
       player wants to move along the X axis is a solid block, then disallow that
       moement and reset xo to 0.
       if (!getWorldCell(x + xo, y, z)) xo = 0;
@@ -82,14 +82,13 @@ class Player {
       Finally, do the same with Y:
       if (!getWorldCell(x + xo, y + yo, z + zo)) yo = 0;
 
+      That's the idea: but that assumes the player is a POINT withouth width or height!
+      You need to check all the corners of the player at least - but probably also
+      the center if they are taller than one cube (otherwise they could jump *through*
+      a solitary floating cube if their head doesn't hit AND their feet don't hit.)
 
-      That's the idea: but that assumes the player is a POINT withouth widht or height!
-      You need to check all the corners of the player - and also the middle (otherwise
-      they could jump through a solitary floating cube if their head doesn't hit AND their
-      feet don't fit.)
-
-      The way I've done it below is horrible, I will clean it up and refactor it after
-      I figure out some better lighting... priorities!
+      The way I've done it below is horrible, a lot of redundant checks. I will clean
+      it up and refactor it after I figure out some better lighting... priorities!
 
     */
     const w = this.w / 2;
