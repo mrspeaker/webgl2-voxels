@@ -7,13 +7,17 @@ const vss = `#version 300 es
 
   layout(location=0) in vec3 pos;
   layout(location=2) in vec2 uv;
-  layout(location=3) in vec3 tx;
+  layout(location=3) in vec2 sprite;
 
   out vec2 texCoord;
 
+  const float size = 1.0 / 16.0;
+
   void main() {
-    texCoord = uv;
-    gl_Position = proj * camera * view * vec4(pos + tx, 1.0);
+    float u = sprite.x * size + uv.x * size;
+    float v = sprite.y * size + uv.y * size;
+    texCoord = vec2(u, v);
+    gl_Position = proj * camera * view * vec4(pos, 1.0);
   }
 `;
 
@@ -33,6 +37,8 @@ class FogShader extends Shader {
   constructor(gl, pMatrix) {
     super(gl, vss, fss);
     this.setPerspective(pMatrix);
+
+    //gl.vertexAttrib2f(this.attributes.sprite.loc, 2.0, 2.0);
 
     gl.useProgram(null);
   }

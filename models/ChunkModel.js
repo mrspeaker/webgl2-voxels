@@ -11,11 +11,29 @@ class ChunkModel extends Model {
   }
 
   rechunk () {
+    const { gl } = this;
     const verts = [];
     const indices = [];
     const uvs = [];
     ChunkModel.buildMesh(this.chunk, verts, indices, uvs);
     this.mesh = glUtils.createMeshVAO(this.gl, "ch", indices, verts, null, uvs);
+
+    gl.bindVertexArray(this.mesh.vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    const num = (verts.length / 3) * 2;
+
+    let x; let y;
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([...Array(num)].map((_, i) => {
+      if (i % 8 === 0) {
+        x = Math.random() * 2 * 3 | 0;
+        y = Math.random() * 2 * 2 | 0;
+      }
+      return i % 2 == 0 ? x : y;
+    })), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(3);
+    gl.vertexAttribPointer(3, 2, gl.FLOAT, false, 0, 0);
+    gl.bindVertexArray(null);
+
   }
 
   static buildMesh(chunk, verts, inds, uvs) {

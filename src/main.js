@@ -48,7 +48,7 @@ function preload() {
 
   return Promise.all(
     [
-      { name: "uv", src: "res/crate.png", type: "tex" },
+      { name: "uv", src: "res/mine.png", type: "tex" },
       { name: "cube0", src: "res/whirlpool_rt.png", type: "img" },
       { name: "cube1", src: "res/whirlpool_lf.png", type: "img" },
       { name: "cube2", src: "res/whirlpool_up.png", type: "img" },
