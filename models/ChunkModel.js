@@ -15,28 +15,20 @@ class ChunkModel extends Model {
     const verts = [];
     const indices = [];
     const uvs = [];
-    ChunkModel.buildMesh(this.chunk, verts, indices, uvs);
+    const faces = [];
+    ChunkModel.buildMesh(this.chunk, verts, indices, uvs, faces);
     this.mesh = glUtils.createMeshVAO(this.gl, "ch", indices, verts, null, uvs);
 
     gl.bindVertexArray(this.mesh.vao);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    const num = (verts.length / 3) * 2;
-
-    let x; let y;
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([...Array(num)].map((_, i) => {
-      if (i % 8 === 0) {
-        x = Math.random() * 2 * 3 | 0;
-        y = Math.random() * 2 * 2 | 0;
-      }
-      return i % 2 == 0 ? x : y;
-    })), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(faces), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(3);
     gl.vertexAttribPointer(3, 2, gl.FLOAT, false, 0, 0);
     gl.bindVertexArray(null);
 
   }
 
-  static buildMesh(chunk, verts, inds, uvs) {
+  static buildMesh(chunk, verts, inds, uvs, faces) {
     const size = chunk.x * chunk.z * chunk.y;
     for (let i = 0; i < size; i++) {
       if (!chunk.cells[i]) continue;
@@ -44,10 +36,13 @@ class ChunkModel extends Model {
       const z = ((i / chunk.x) | 0) % chunk.z;
       const y = (i / (chunk.x * chunk.z)) | 0;
       // Check each face direction
+      let xf = Math.random() * 2 * 2 | 0;
+      let yf = Math.random() * 2 * 2 | 0;
       for (let j = 0; j < 6; j++) {
         const c = chunk.get(x, y, z, j);
         if (c != 1) {
           // Append face
+          faces.push(xf, yf, xf, yf, xf, yf, xf, yf);
           ChunkModel.appendQuad(chunk, j, x, y, z, verts, inds, uvs);
         }
       }
