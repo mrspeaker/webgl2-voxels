@@ -40,7 +40,7 @@ Chunk.WEST = 3;
 Chunk.UP = 4;
 Chunk.DOWN = 5;
 
-Chunk.UV = [0, 0, 1, 0, 1, 1, 0, 1];
+Chunk.UV = [0, 1, 1, 1, 1, 0, 0, 0];
 Chunk.INDEX = [0, 1, 2, 2, 3, 0];
 Chunk.FACES = [
   {

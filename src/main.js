@@ -15,6 +15,7 @@ import World from "./World.js";
 const gl = document.querySelector("canvas").getContext("webgl2");
 glUtils.fitScreen(gl);
 gl.canvas.onclick = () => gl.canvas.requestPointerLock();
+window.addEventListener("resize", () => glUtils.fitScreen(gl), false);
 
 const camera = new Camera(gl);
 camera.mode = Camera.MODE_FREE;
