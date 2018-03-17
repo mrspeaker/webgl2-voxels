@@ -10,7 +10,7 @@ class ChunkModel extends Model {
     this.rechunk();
   }
 
-  rechunk () {
+  rechunk() {
     const { gl } = this;
     const verts = [];
     const indices = [];
@@ -36,9 +36,18 @@ class ChunkModel extends Model {
       const z = ((i / chunk.x) | 0) % chunk.z;
       const y = (i / (chunk.x * chunk.z)) | 0;
       // Check each face direction
-      let xf = Math.random() * 2 * 2 | 0;
-      let yf = Math.random() * 2 * 2 | 0;
+      let xf = 4; //Math.random() * 2 * 2 | 0;
+      let yf = 1; //Math.random() * 2 * 2 | 0;
+      const oh = [
+        [4, 1, 4,1, 4, 1, 4, 1, 5, 1, 5, 1],
+        [0, 1, 0, 1, 0, 1, 0, 1, 0,1, 0, 1],
+        [4, 0, 3, 2, 4, 0, 3, 2, 4, 0, 4, 0],
+      ];
+      let ii = (Math.random() * oh.length )| 0;
+
       for (let j = 0; j < 6; j++) {
+        xf = oh[ii][j * 2];
+        yf = oh[ii][j * 2 + 1];
         if (!chunk.get(x, y, z, j)) {
           // Append face
           ChunkModel.appendQuad(chunk, j, x, y, z, verts, inds, uvs);
@@ -61,11 +70,7 @@ class ChunkModel extends Model {
     }
 
     for (let i = 0; i < 4; i++) {
-      verts.push(
-        v[i * 3 + 0] + x,
-        v[i * 3 + 1] + y,
-        v[i * 3 + 2] + z
-      );
+      verts.push(v[i * 3 + 0] + x, v[i * 3 + 1] + y, v[i * 3 + 2] + z);
     }
 
     Chunk.UV.forEach(uv => uvs.push(uv));
