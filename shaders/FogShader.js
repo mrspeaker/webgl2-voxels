@@ -37,9 +37,6 @@ class FogShader extends Shader {
   constructor(gl, pMatrix) {
     super(gl, vss, fss);
     this.setPerspective(pMatrix);
-
-    //gl.vertexAttrib2f(this.attributes.sprite.loc, 2.0, 2.0);
-
     gl.useProgram(null);
   }
 

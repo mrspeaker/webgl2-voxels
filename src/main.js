@@ -22,7 +22,7 @@ camera.mode = Camera.MODE_FREE;
 const controls = {
   keys: new KeyboardControls(gl.canvas),
   mouse: new CameraController(gl, camera)
-}
+};
 
 // Shaders
 const fogShader = new FogShader(gl, camera.projectionMatrix);
@@ -36,7 +36,7 @@ const player = new Player(controls, camera, world);
 
 // MAIN
 preload()
-  .then(res => initialize(res))
+  .then(initialize)
   .then(() => requestAnimationFrame(loopy));
 
 function preload() {
@@ -49,7 +49,7 @@ function preload() {
 
   return Promise.all(
     [
-      { name: "uv", src: "res/mine.png", type: "tex" },
+      { name: "blocks", src: "res/mine.png", type: "tex" },
       { name: "cube0", src: "res/whirlpool_rt.png", type: "img" },
       { name: "cube1", src: "res/whirlpool_lf.png", type: "img" },
       { name: "cube2", src: "res/whirlpool_up.png", type: "img" },
@@ -76,13 +76,11 @@ function initialize(res) {
   const imgs = res.filter(i => i.type == "img");
 
   texs.forEach(i => glUtils.loadTexture(gl, i.name, i.img));
-  glUtils.loadCubeMap(
-    gl,
-    "skybox",
-    imgs.filter(i => i.name.startsWith("cube")).map(i => i.img)
-  );
+
+  const cubeImg = imgs.filter(i => i.name.startsWith("cube")).map(i => i.img);
+  glUtils.loadCubeMap(gl, "skybox", cubeImg);
   skyboxShader.setCube(glUtils.textures.skybox);
-  fogShader.setTexture(glUtils.textures.uv);
+  fogShader.setTexture(glUtils.textures.blocks);
 
   // Initialize webgl
   gl.clearColor(1, 1, 1, 1.0);
@@ -95,12 +93,9 @@ function initialize(res) {
   world.rechunk(0.15);
 }
 
-let dt = 0;
-let last;
-function loopy(t) {
-  requestAnimationFrame(loopy);
-  dt = (t - (last || t)) / 1000;
-  last = t;
+function loopy(t, last = t) {
+  requestAnimationFrame(time => loopy(time, t));
+  const dt = Math.min(t - last, 100) / 1000;
 
   player.update(dt);
   world.update(dt);
@@ -114,7 +109,6 @@ function loopy(t) {
   // E key to gen new chunk
   if (controls.keys.isDown(69)) {
     controls.keys[69] = false;
-    console.log("rch")
     world.rechunk(Math.random() * 0.2);
   }
 
