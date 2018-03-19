@@ -61,7 +61,6 @@ class World {
 
   // Traverse world down ray until hit a cell.
   getCellFromRay(point, direction) {
-    //https://github.com/kpreid/cubes/blob/c5e61fa22cb7f9ba03cd9f22e5327d738ec93969/world.js#L307
     // TODO: buggy. Inaccurate hits.
     const { x: px, y: py, z: pz } = point;
     let { x: dirX, y: dirY, z: dirZ } = direction;
@@ -104,12 +103,13 @@ class World {
         }
       }
       const cell = this.getCell(x, y, z);
-      if (y > 0 && cell) {
+      if (cell) {
         found = true;
         const ch = this.setCell(x, y, z, 0);
         if (ch) {
           ch.rechunk();
         }
+        return { x, y, z };
       }
     }
   }

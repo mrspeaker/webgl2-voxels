@@ -39,7 +39,7 @@ const player = new Player(controls, camera, world);
 
 const ray = new Ray(camera);
 const cube = Cube.create(gl);
-cube.setScale(0.5);//transform.scale(0.5);
+//cube.setScale(0.5);//transform.scale(0.5);
 
 // MAIN
 preload()
@@ -126,9 +126,9 @@ function loopy(t, last = t) {
     gl.canvas.height
   );
 
-  cube.setPosition(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
-  const dir = r.ray.clone().scale(8);
-  cube.addPosition(dir.x, dir.y, dir.z);
+  //cube.setPosition(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
+  //const dir = r.ray.clone().scale(8);
+  //cube.addPosition(dir.x, dir.y, dir.z);
   //  r.ray.x, r.ray.y, r.ray.z);
 
   line.mesh.remesh(new Vec3(r.near.x, r.near.y -0.1, r.near.z), r.far);
@@ -136,12 +136,15 @@ function loopy(t, last = t) {
   //l.scale(-2);
 
   if (controls.mouse.isDown) {
-    controls.mouse.isDown = false;
+    //controls.mouse.isDown = false;
     //line.mesh.addLine(r.near, r.far);
     //player.pos.x += Math.random() * 0.2 - 0.1;
     //player.pos.z += Math.random() * 0.2 - 0.1;
-    world.getCellFromRay(camera.transform.position, r.ray);
-
+    const cell = world.getCellFromRay(camera.transform.position, r.ray);
+    if (cell) {
+      cube.setPosition(cell.x, cell.y, cell.z);
+      cube.addPosition(0.5, 0.5, 0.5);
+    }
   }
 
   skyboxShader
