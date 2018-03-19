@@ -22,9 +22,17 @@ class CameraController {
 
     // TODO: simplify this class with pointerlock.
 
-    this.canvas.addEventListener("mousedown", this.onMouseDown.bind(this), false);
+    this.canvas.addEventListener(
+      "mousedown",
+      this.onMouseDown.bind(this),
+      false
+    );
     this.canvas.addEventListener("mouseup", this.onMouseUp.bind(this), false);
-    this.canvas.addEventListener("mousemove", this.onMouseMove.bind(this), false);
+    this.canvas.addEventListener(
+      "mousemove",
+      this.onMouseMove.bind(this),
+      false
+    );
     this.canvas.addEventListener(
       "mousewheel",
       this.onMouseWheel.bind(this),
@@ -67,8 +75,8 @@ class CameraController {
     } = this;
     const x = e.pageX - offsetX;
     const y = e.pageY - offsetY;
-    const dx = e.movementX;// x - prevX; TODO: changed to pointerlock. cleanup.
-    const dy = e.movementY;//y - prevY;
+    const dx = e.movementX; // x - prevX; TODO: changed to pointerlock. cleanup.
+    const dy = e.movementY; //y - prevY;
 
     if (!e.shiftKey) {
       camera.transform.rotation.y += dx * (rotateRate / canvas.width);

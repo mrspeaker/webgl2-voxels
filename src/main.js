@@ -1,5 +1,5 @@
 import glUtils from "../lib/glUtils.js";
-
+import Vec3 from "../lib/Vec3.js";
 import Cube from "../models/Cube.js";
 import GridAxis from "../models/GridAxis.js";
 import GridAxisShader from "../shaders/GridAxisShader.js";
@@ -8,9 +8,11 @@ import FogShader from "../shaders/FogShader.js";
 import Camera from "./Camera.js";
 import CameraController from "../controls/CameraController.js";
 import KeyboardControls from "../controls/KeyboardControls.js";
+import Line from "../models/Line.js";
 
 import Player from "./Player.js";
 import World from "./World.js";
+import Ray from "../lib/Ray.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");
 glUtils.fitScreen(gl);
@@ -27,12 +29,17 @@ const controls = {
 // Shaders
 const fogShader = new FogShader(gl, camera.projectionMatrix);
 const gridAxis = GridAxis.create(gl);
+const line = Line.create(gl);
 const gridShader = new GridAxisShader(gl, camera.projectionMatrix);
 const skybox = Cube.create(gl, "Skybox", 100, 100, 100);
 const skyboxShader = new SkyboxShader(gl, camera.projectionMatrix);
 
 const world = new World(gl);
 const player = new Player(controls, camera, world);
+
+const ray = new Ray(camera);
+const cube = Cube.create(gl);
+cube.setScale(0.5);//transform.scale(0.5);
 
 // MAIN
 preload()
@@ -112,6 +119,29 @@ function loopy(t, last = t) {
     world.rechunk(Math.random() * 0.2);
   }
 
+  const r = ray.fromScreen(
+    gl.canvas.width / 2,
+    gl.canvas.height / 2,
+    gl.canvas.width,
+    gl.canvas.height
+  );
+
+  cube.setPosition(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
+  r.ray.scale(8);
+  cube.addPosition(r.ray.x, r.ray.y, r.ray.z);
+  //  r.ray.x, r.ray.y, r.ray.z);
+
+  line.mesh.remesh(new Vec3(r.near.x, r.near.y -0.1, r.near.z), r.far);
+  //const l = new Vec3(...camera.transform.forward);
+  //l.scale(-2);
+
+  if (controls.mouse.isDown) {
+    controls.mouse.isDown = false;
+    line.mesh.addLine(r.near, r.far);
+    player.pos.x += Math.random() * 0.2 - 0.1;
+    player.pos.z += Math.random() * 0.2 - 0.1;
+  }
+
   skyboxShader
     .activate()
     .preRender()
@@ -121,12 +151,14 @@ function loopy(t, last = t) {
   gridShader
     .activate()
     .setCamera(camera.view)
+    .renderModel(line.preRender())
     .renderModel(gridAxis.preRender());
 
   fogShader
     .activate()
     .preRender()
-    .setCamera(camera.view);
+    .setCamera(camera.view)
+    .renderModel(cube.preRender());
 
   world.chunks.forEach(cr => {
     fogShader.renderModel(cr.preRender());
