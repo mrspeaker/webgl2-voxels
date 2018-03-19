@@ -127,8 +127,8 @@ function loopy(t, last = t) {
   );
 
   cube.setPosition(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
-  r.ray.scale(8);
-  cube.addPosition(r.ray.x, r.ray.y, r.ray.z);
+  const dir = r.ray.clone().scale(8);
+  cube.addPosition(dir.x, dir.y, dir.z);
   //  r.ray.x, r.ray.y, r.ray.z);
 
   line.mesh.remesh(new Vec3(r.near.x, r.near.y -0.1, r.near.z), r.far);
@@ -137,9 +137,11 @@ function loopy(t, last = t) {
 
   if (controls.mouse.isDown) {
     controls.mouse.isDown = false;
-    line.mesh.addLine(r.near, r.far);
-    player.pos.x += Math.random() * 0.2 - 0.1;
-    player.pos.z += Math.random() * 0.2 - 0.1;
+    //line.mesh.addLine(r.near, r.far);
+    //player.pos.x += Math.random() * 0.2 - 0.1;
+    //player.pos.z += Math.random() * 0.2 - 0.1;
+    world.getCellFromRay(camera.transform.position, r.ray);
+
   }
 
   skyboxShader

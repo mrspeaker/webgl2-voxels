@@ -3,7 +3,7 @@ class Chunk {
     this.x = x;
     this.y = y;
     this.z = z;
-    this.cells = [...Array(x * z * y)].fill(1);
+    this.cells = [...Array(x * z * y)].fill(0);
   }
   getIdx(x, y, z) {
     return x + z * this.x + y * this.x * this.z;

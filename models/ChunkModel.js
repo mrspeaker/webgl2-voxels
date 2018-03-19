@@ -31,23 +31,22 @@ class ChunkModel extends Model {
   static buildMesh(chunk, verts, inds, uvs, faces) {
     const size = chunk.x * chunk.z * chunk.y;
     for (let i = 0; i < size; i++) {
-      if (!chunk.cells[i]) continue;
+      const idx = chunk.cells[i];
+      if (!idx) continue;
       const x = i % chunk.x;
       const z = ((i / chunk.x) | 0) % chunk.z;
       const y = (i / (chunk.x * chunk.z)) | 0;
       // Check each face direction
-      let xf = 4; //Math.random() * 2 * 2 | 0;
-      let yf = 1; //Math.random() * 2 * 2 | 0;
+      let xf; // = 4; //Math.random() * 2 * 2 | 0;
+      let yf; // = 1; //Math.random() * 2 * 2 | 0;
       const oh = [
-        [4, 1, 4,1, 4, 1, 4, 1, 5, 1, 5, 1],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0,1, 0, 1],
-        [4, 0, 3, 2, 4, 0, 3, 2, 4, 0, 4, 0],
+        [4, 1, 4, 1, 4, 1, 4, 1, 5, 1, 5, 1],
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+        [4, 0, 3, 2, 4, 0, 3, 2, 4, 0, 4, 0]
       ];
-      let ii = (Math.random() * oh.length )| 0;
-
       for (let j = 0; j < 6; j++) {
-        xf = oh[ii][j * 2];
-        yf = oh[ii][j * 2 + 1];
+        xf = oh[idx][j * 2];
+        yf = oh[idx][j * 2 + 1];
         if (!chunk.get(x, y, z, j)) {
           // Append face
           ChunkModel.appendQuad(chunk, j, x, y, z, verts, inds, uvs);
