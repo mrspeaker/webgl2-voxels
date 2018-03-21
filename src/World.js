@@ -9,7 +9,7 @@ class World {
       new ChunkModel(gl, new Chunk(x, y, z)),
       new ChunkModel(gl, new Chunk(x, y, z, -1, 0, 0)),
       new ChunkModel(gl, new Chunk(x, y, z, -1, 0, 1)),
-      new ChunkModel(gl, new Chunk(x, y, z, 0, 0, 1)),
+      new ChunkModel(gl, new Chunk(x, y, z, 0, 0, 1))
     ];
     // TODO: fix chunk finding.
     this.chIdx = ["0:0:0", "-1:0:0", "-1:0:1", "0:0:1"];
@@ -23,36 +23,36 @@ class World {
 
   update() {}
 
-  getCell(x, y, z) {
-    const { chunks, cx, cy, cz } = this;
-    x = Math.floor(x);
-    y = Math.floor(y);
-    z = Math.floor(z);
+  getChunk(x, y, z) {
+    const { chIdx, chunks, cx, cy, cz } = this;
     // get chunk
     const chX = Math.floor(x / cx);
     const chZ = Math.floor(z / cz);
     const chY = Math.floor(y / cy);
+    const id = chIdx.indexOf(chX + ":" + chY + ":" + chZ);
+    if (id == -1) return null;
+    return chunks[id];
+  }
 
-
-    const chIdx = this.chIdx.indexOf(chX + ":" + chY + ":" + chZ);
-    if (chIdx == -1) return 0;
-    return chunks[chIdx].chunk.get(x - chX * cx, y - chY * cy, z - chZ * cz);
+  getCell(x, y, z) {
+    x = Math.floor(x);
+    y = Math.floor(y);
+    z = Math.floor(z);
+    const chunk = this.getChunk(x, y, z);
+    if (!chunk) return 0;
+    const c = chunk.chunk;
+    return c.get(x - c.xo, y - c.yo, z - c.zo);
   }
 
   setCell(x, y, z, v) {
-    const { chunks, cx, cy, cz } = this;
     x = Math.floor(x);
     y = Math.floor(y);
     z = Math.floor(z);
-    // get chunk
-    const chX = Math.floor(x / cx);
-    const chZ = Math.floor(z / cz);
-    const chY = Math.floor(y / cy);
-
-    const chIdx = this.chIdx.indexOf(chX + ":" + chY + ":" + chZ);
-    if (chIdx == -1) return;
-    chunks[chIdx].chunk.set(x - chX * cx, y - chY * cy, z - chZ * cz, v);
-    return chunks[chIdx];
+    const chunk = this.getChunk(x, y, z);
+    if (!chunk) return null;
+    const c = chunk.chunk;
+    c.set(x - c.xo, y - c.yo, z - c.zo, v);
+    return chunk;
   }
 
   rechunk() {
@@ -60,17 +60,21 @@ class World {
     const simplex = new SimplexNoise();
     chunks.forEach(cr => {
       const { chunk } = cr;
+      const AIR = 0;
+      const STONE = 2;
+      const WOOD = 1;
+      const BOOKS = 3;
       chunk.cells = chunk.cells.map((c, i) => {
         let x = i % chunk.x + chunk.xo;
         let z = ((i / chunk.x) | 0) % chunk.z + chunk.zo;
         let y = ((i / (chunk.x * chunk.z)) | 0) + chunk.yo;
 
-        if (y < 1) return 2; // Floor
+        if (y < 1) return STONE; // Ground
         const v = simplex.noise3D(x / 10, y / 10, z / 10) * 5;
         const solid = Math.max(0, Math.min(1, Math.floor(v)));
-        const isBooks =  (v | 0) % 3 == 2 ;
-        const isWood = v / 3 | 0 == 1;
-        return !solid ? 0 : isWood ? 1 : isBooks ? 3 : 2;
+        const isBooks = (v | 0) % 3 == 2;
+        const isWood = (v / 3) | (0 == 1);
+        return !solid ? AIR : isWood ? WOOD : isBooks ? BOOKS : STONE;
       });
       cr.rechunk();
     });
@@ -95,16 +99,14 @@ class World {
     /*
       The point of toX/Y/Z is to find the number of units to the nearest
       edge. If the point was in the middle of a cube, then it would be +0.5
-      or -0.5 for each value (depending on direction.)
-
-      The extra case (frac1 vs frac0) is when the initial point is in a
-      negative chunk. I'm sure this can be simplified!
+      or -0.5 for each value (depending on direction, and if chunk is -ve)
+      * chunk > 0 && dir > 0 && pos = 0.7 => 0.3;
+      * chunk > 0 && dir < 0 && pos = 0.7 => 0.7;
     */
-    const frac0 = (dir, a) => (dir > 0 ? 1 - a % 1 : a % 1);
-    const frac1 = (dir, a) => (dir > 0 ? (a * -1) % 1 : 1 + a % 1);
-    let toX = x >= 0 ? frac0(stepX, px) : frac1(stepX, px);
-    let toY = y >= 0 ? frac0(stepY, py) : frac1(stepY, py);
-    let toZ = z >= 0 ? frac0(stepZ, pz) : frac1(stepZ, pz);
+    const frac = (dir, a) => (dir > 0 ? 1 - a % 1 : a % 1);
+    let toX = x >= 0 ? frac(stepX, px) : frac(-stepX, -px);
+    let toY = y >= 0 ? frac(stepY, py) : frac(-stepY, -py);
+    let toZ = z >= 0 ? frac(stepZ, pz) : frac(-stepZ, -pz);
 
     toX *= dtX;
     toY *= dtY;
@@ -113,6 +115,7 @@ class World {
     let found = false;
     let tries = 20;
     let face;
+
     while (!found && tries-- > 0) {
       if (toX < toY) {
         if (toX < toZ) {
