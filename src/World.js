@@ -55,7 +55,7 @@ class World {
     return chunk;
   }
 
-  rechunk() {
+  gen() {
     const { chunks } = this;
     const simplex = new SimplexNoise();
     chunks.forEach(cr => {
@@ -70,7 +70,7 @@ class World {
         let y = ((i / (chunk.x * chunk.z)) | 0) + chunk.yo;
 
         if (y < 1) return STONE; // Ground
-        const v = simplex.noise3D(x / 10, y / 10, z / 10) * 5;
+        const v = simplex.noise3D(x / 10, y / 10, z / 10) * 8;
         const solid = Math.max(0, Math.min(1, Math.floor(v)));
         const isBooks = (v | 0) % 3 == 2;
         const isWood = (v / 3) | (0 == 1);

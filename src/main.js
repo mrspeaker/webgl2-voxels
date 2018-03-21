@@ -9,7 +9,6 @@ import FogShader from "../shaders/FogShader.js";
 import Camera from "./Camera.js";
 import CameraController from "../controls/CameraController.js";
 import KeyboardControls from "../controls/KeyboardControls.js";
-import Line from "../models/Line.js";
 
 import Player from "./Player.js";
 import World from "./World.js";
@@ -30,7 +29,6 @@ const controls = {
 // Shaders
 const fogShader = new FogShader(gl, camera.projectionMatrix);
 const gridAxis = GridAxis.create(gl);
-const line = Line.create(gl);
 const gridShader = new GridAxisShader(gl, camera.projectionMatrix);
 const skybox = Cube.create(gl, "Skybox", 100, 100, 100);
 const skyboxShader = new SkyboxShader(gl, camera.projectionMatrix);
@@ -40,7 +38,7 @@ const player = new Player(controls, camera, world);
 
 const ray = new Ray(camera);
 const cube = Cube.create(gl);
-cube.setScale(1.01); //transform.scale(0.5);
+cube.setScale(1.01);
 cube.mesh.drawMode = gl.LINES;
 
 // MAIN
@@ -99,26 +97,8 @@ function initialize(res) {
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
   // Set up initial chunks
-  world.rechunk(0.15);
+  world.gen();
 }
-
-const pos = {
-  x: 0.5,
-  y: 1.9,
-  z: 0.5
-};
-
-const dir = {
-  x: 1,
-  y: -0.075,
-  z: 0.0001
-};
-//const c = ray.fromScreen(0, 0, gl.canvas.width, gl.canvas.height);
-const end = Vec3.from(dir)
-  .scale(10)
-  .addv(pos);
-//line.mesh.addLine(Vec3.from(pos), new Vec3(0, 0, 0));
-//line.mesh.addLine(Vec3.from(pos), end);
 
 function loopy(t, last = t) {
   requestAnimationFrame(time => loopy(time, t));
@@ -136,7 +116,7 @@ function loopy(t, last = t) {
   // E key to gen new chunk
   if (controls.keys.isDown(69)) {
     controls.keys[69] = false;
-    world.rechunk(Math.random() * 0.2);
+    world.gen();
   }
 
   const r = ray.fromScreen(
@@ -145,35 +125,34 @@ function loopy(t, last = t) {
     gl.canvas.width,
     gl.canvas.height
   );
-
-  line.mesh.remesh(new Vec3(r.near.x, r.near.y - 0.1, r.near.z), r.far);
   const cell = world.getCellFromRay(camera.transform.position, r.ray);
-  //const l = new Vec3(...camera.transform.forward); l.scale(-2);
 
-  const isShift = controls.keys.isDown(16) || controls.mouse.isRight;
   if (cell) {
     cube.setPosition(cell.x, cell.y, cell.z);
     cube.addPosition(0.5, 0.5, 0.5);
-    if (isShift) {
+    const isAddBlock = controls.keys.isDown(16) || controls.mouse.isRight;
+    if (isAddBlock) {
       cube.addPosition(...Chunk.FACES[cell.face].n);
     }
-  }
+    if (controls.mouse.isDown) {
+      controls.mouse.isDown = false;
 
-  if (controls.mouse.isDown) {
-    controls.mouse.isDown = false;
-
-    if (cell) {
+      // Add or remove block
       const n = Chunk.FACES[cell.face].n;
-      const xo = isShift ? n[0] : 0;
-      const yo = isShift ? n[1] : 0;
-      const zo = isShift ? n[2] : 0;
-      const ch = world.setCell(cell.x + xo, cell.y + yo, cell.z + zo, isShift ? 1 : 0);
-      if (ch) {
-        ch.rechunk();
-      }
+      const xo = isAddBlock ? n[0] : 0;
+      const yo = isAddBlock ? n[1] : 0;
+      const zo = isAddBlock ? n[2] : 0;
+      const ch = world.setCell(
+        cell.x + xo,
+        cell.y + yo,
+        cell.z + zo,
+        isAddBlock ? 1 : 0
+      );
+      if (ch) ch.rechunk();
     }
   }
 
+  // Render
   skyboxShader
     .activate()
     .preRender()
@@ -183,7 +162,6 @@ function loopy(t, last = t) {
   gridShader
     .activate()
     .setCamera(camera.view)
-    //.renderModel(line.preRender())
     .renderModel(gridAxis.preRender());
 
   fogShader
