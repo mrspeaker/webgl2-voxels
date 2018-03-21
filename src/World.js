@@ -7,8 +7,12 @@ class World {
   constructor(gl, x = 16, y = 16, z = 16) {
     this.chunks = [
       new ChunkModel(gl, new Chunk(x, y, z)),
-      new ChunkModel(gl, new Chunk(x, y, z, -16, 0, 0))
+      new ChunkModel(gl, new Chunk(x, y, z, -1, 0, 0)),
+      new ChunkModel(gl, new Chunk(x, y, z, -1, 0, 1)),
+      new ChunkModel(gl, new Chunk(x, y, z, 0, 0, 1)),
     ];
+    // TODO: fix chunk finding.
+    this.chIdx = ["0:0:0", "-1:0:0", "-1:0:1", "0:0:1"];
 
     this.simplex = new SimplexNoise();
 
@@ -29,7 +33,8 @@ class World {
     const chZ = Math.floor(z / cz);
     const chY = Math.floor(y / cy);
 
-    const chIdx = ["0:0:0", "-1:0:0"].indexOf(chX + ":" + chY + ":" + chZ);
+
+    const chIdx = this.chIdx.indexOf(chX + ":" + chY + ":" + chZ);
     if (chIdx == -1) return 0;
     return chunks[chIdx].chunk.get(x - chX * cx, y - chY * cy, z - chZ * cz);
   }
@@ -44,26 +49,28 @@ class World {
     const chZ = Math.floor(z / cz);
     const chY = Math.floor(y / cy);
 
-    const chIdx = ["0:0:0", "-1:0:0"].indexOf(chX + ":" + chY + ":" + chZ);
+    const chIdx = this.chIdx.indexOf(chX + ":" + chY + ":" + chZ);
     if (chIdx == -1) return;
     chunks[chIdx].chunk.set(x - chX * cx, y - chY * cy, z - chZ * cz, v);
     return chunks[chIdx];
   }
 
-  rechunk(r) {
+  rechunk() {
     const { chunks } = this;
     const simplex = new SimplexNoise();
-    chunks.forEach((cr, chi) => {
-      cr.chunk.cells = cr.chunk.cells.map((c, i) => {
-        let x = (i % cr.chunk.x) + cr.chunk.xo
-        let z = (((i / cr.chunk.x) | 0) % cr.chunk.z) + cr.chunk.zo;
-        let y = ((i / (cr.chunk.x * cr.chunk.z)) | 0) + cr.chunk.yo;
+    chunks.forEach(cr => {
+      const { chunk } = cr;
+      chunk.cells = chunk.cells.map((c, i) => {
+        let x = i % chunk.x + chunk.xo;
+        let z = ((i / chunk.x) | 0) % chunk.z + chunk.zo;
+        let y = ((i / (chunk.x * chunk.z)) | 0) + chunk.yo;
 
-        if (y < 1) return 1;
-        //console.log(x, y, z);
-        const v = simplex.noise3D(x / 10, y / 10 , z / 10) * 5;
+        if (y < 1) return 2; // Floor
+        const v = simplex.noise3D(x / 10, y / 10, z / 10) * 5;
         const solid = Math.max(0, Math.min(1, Math.floor(v)));
-        return !solid ? 0 : (v | 0) % 3 == 2 ? 2 : 1;
+        const isBooks =  (v | 0) % 3 == 2 ;
+        const isWood = v / 3 | 0 == 1;
+        return !solid ? 0 : isWood ? 1 : isBooks ? 3 : 2;
       });
       cr.rechunk();
     });
@@ -93,8 +100,8 @@ class World {
       The extra case (frac1 vs frac0) is when the initial point is in a
       negative chunk. I'm sure this can be simplified!
     */
-    const frac0 = (dir, a) => dir > 0 ? 1 - (a % 1) : a % 1;
-    const frac1 = (dir, a) => dir > 0 ? ((a * -1) % 1) : 1 + (a % 1);
+    const frac0 = (dir, a) => (dir > 0 ? 1 - a % 1 : a % 1);
+    const frac1 = (dir, a) => (dir > 0 ? (a * -1) % 1 : 1 + a % 1);
     let toX = x >= 0 ? frac0(stepX, px) : frac1(stepX, px);
     let toY = y >= 0 ? frac0(stepY, py) : frac1(stepY, py);
     let toZ = z >= 0 ? frac0(stepZ, pz) : frac1(stepZ, pz);

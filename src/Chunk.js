@@ -3,9 +3,9 @@ class Chunk {
     this.x = x;
     this.y = y;
     this.z = z;
-    this.xo = xo;
-    this.yo = yo;
-    this.zo = zo;
+    this.xo = xo * x;
+    this.yo = yo * y;
+    this.zo = zo * z;
     this.cells = [...Array(x * z * y)].fill(0);
   }
   getIdx(x, y, z) {
