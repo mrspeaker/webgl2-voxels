@@ -19,6 +19,7 @@ class CameraController {
     this.y = 0;
 
     this.isDown = false;
+    this.isRight = false;
 
     // TODO: simplify this class with pointerlock.
 
@@ -43,6 +44,9 @@ class CameraController {
       this.onMouseWheel.bind(this),
       false
     );
+    this.canvas.addEventListener("contextmenu", e => {
+      e.preventDefault();
+    }, false);
   }
 
   getMouseVec2(e) {
@@ -53,10 +57,12 @@ class CameraController {
     this.initX = this.prevX = e.pageX - this.offsetX;
     this.initY = this.prevY = e.pageY - this.offsetY;
     this.isDown = true;
+    this.isRight = e.which === 3;
   }
 
   onMouseUp(e) {
     this.isDown = false;
+    this.isRight = false;
   }
 
   onMouseMove(e) {

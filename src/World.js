@@ -105,7 +105,7 @@ class World {
         } else {
           z += stepZ;
           toZ += dtZ;
-          face = -stepZ > 0 ? Chunk.NORTH : Chunk.SOUTH;
+          face = stepZ > 0 ? Chunk.NORTH : Chunk.SOUTH;
         }
       } else {
         if (toY < toZ) {
@@ -115,7 +115,7 @@ class World {
         } else {
           z += stepZ;
           toZ += dtZ;
-          face = -stepZ > 0 ? Chunk.NORTH : Chunk.SOUTH;
+          face = stepZ > 0 ? Chunk.NORTH : Chunk.SOUTH;
         }
       }
       const cell = this.getCell(x, y, z);

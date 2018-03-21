@@ -1,6 +1,7 @@
 import glUtils from "../lib/glUtils.js";
 import Vec3 from "../lib/Vec3.js";
 import Cube from "../models/Cube.js";
+import Chunk from "./Chunk.js";
 import GridAxis from "../models/GridAxis.js";
 import GridAxisShader from "../shaders/GridAxisShader.js";
 import SkyboxShader from "../shaders/SkyboxShader.js";
@@ -39,7 +40,8 @@ const player = new Player(controls, camera, world);
 
 const ray = new Ray(camera);
 const cube = Cube.create(gl);
-cube.setScale(1.1); //transform.scale(0.5);
+cube.setScale(1.01); //transform.scale(0.5);
+cube.mesh.drawMode = gl.LINES;
 
 // MAIN
 preload()
@@ -145,17 +147,27 @@ function loopy(t, last = t) {
   );
 
   line.mesh.remesh(new Vec3(r.near.x, r.near.y - 0.1, r.near.z), r.far);
-  //const l = new Vec3(...camera.transform.forward);
-  //l.scale(-2);
+  const cell = world.getCellFromRay(camera.transform.position, r.ray);
+  //const l = new Vec3(...camera.transform.forward); l.scale(-2);
+
+  const isShift = controls.keys.isDown(16) || controls.mouse.isRight;
+  if (cell) {
+    cube.setPosition(cell.x, cell.y, cell.z);
+    cube.addPosition(0.5, 0.5, 0.5);
+    if (isShift) {
+      cube.addPosition(...Chunk.FACES[cell.face].n);
+    }
+  }
+
   if (controls.mouse.isDown) {
     controls.mouse.isDown = false;
 
-    const cell = world.getCellFromRay(camera.transform.position, r.ray);
     if (cell) {
-      cube.setPosition(cell.x, cell.y, cell.z);
-      cube.addPosition(0.5, 0.5, 0.5);
-      console.log(cell.face);
-      const ch = world.setCell(cell.x, cell.y, cell.z, 0);
+      const n = Chunk.FACES[cell.face].n;
+      const xo = isShift ? n[0] : 0;
+      const yo = isShift ? n[1] : 0;
+      const zo = isShift ? n[2] : 0;
+      const ch = world.setCell(cell.x + xo, cell.y + yo, cell.z + zo, isShift ? 1 : 0);
       if (ch) {
         ch.rechunk();
       }
