@@ -39,7 +39,7 @@ const player = new Player(controls, camera, world);
 
 const ray = new Ray(camera);
 const cube = Cube.create(gl);
-//cube.setScale(0.5);//transform.scale(0.5);
+cube.setScale(1.1); //transform.scale(0.5);
 
 // MAIN
 preload()
@@ -100,6 +100,24 @@ function initialize(res) {
   world.rechunk(0.15);
 }
 
+const pos = {
+  x: 0.5,
+  y: 1.9,
+  z: 0.5
+};
+
+const dir = {
+  x: 1,
+  y: -0.075,
+  z: 0.0001
+};
+//const c = ray.fromScreen(0, 0, gl.canvas.width, gl.canvas.height);
+const end = Vec3.from(dir)
+  .scale(10)
+  .addv(pos);
+//line.mesh.addLine(Vec3.from(pos), new Vec3(0, 0, 0));
+//line.mesh.addLine(Vec3.from(pos), end);
+
 function loopy(t, last = t) {
   requestAnimationFrame(time => loopy(time, t));
   const dt = Math.min(t - last, 100) / 1000;
@@ -126,24 +144,21 @@ function loopy(t, last = t) {
     gl.canvas.height
   );
 
-  //cube.setPosition(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
-  //const dir = r.ray.clone().scale(8);
-  //cube.addPosition(dir.x, dir.y, dir.z);
-  //  r.ray.x, r.ray.y, r.ray.z);
-
-  line.mesh.remesh(new Vec3(r.near.x, r.near.y -0.1, r.near.z), r.far);
+  line.mesh.remesh(new Vec3(r.near.x, r.near.y - 0.1, r.near.z), r.far);
   //const l = new Vec3(...camera.transform.forward);
   //l.scale(-2);
-
   if (controls.mouse.isDown) {
     //controls.mouse.isDown = false;
-    //line.mesh.addLine(r.near, r.far);
-    //player.pos.x += Math.random() * 0.2 - 0.1;
-    //player.pos.z += Math.random() * 0.2 - 0.1;
+
     const cell = world.getCellFromRay(camera.transform.position, r.ray);
     if (cell) {
       cube.setPosition(cell.x, cell.y, cell.z);
       cube.addPosition(0.5, 0.5, 0.5);
+
+      const ch = world.setCell(cell.x, cell.y, cell.z, 0);
+      if (ch) {
+        ch.rechunk();
+      }
     }
   }
 
@@ -156,7 +171,7 @@ function loopy(t, last = t) {
   gridShader
     .activate()
     .setCamera(camera.view)
-    .renderModel(line.preRender())
+    //.renderModel(line.preRender())
     .renderModel(gridAxis.preRender());
 
   fogShader
