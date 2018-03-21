@@ -1,8 +1,11 @@
 class Chunk {
-  constructor(x = 2, y = 2, z = 2) {
+  constructor(x = 2, y = 2, z = 2, xo = 0, yo = 0, zo = 0) {
     this.x = x;
     this.y = y;
     this.z = z;
+    this.xo = xo;
+    this.yo = yo;
+    this.zo = zo;
     this.cells = [...Array(x * z * y)].fill(0);
   }
   getIdx(x, y, z) {

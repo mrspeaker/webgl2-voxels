@@ -19,6 +19,7 @@ class ChunkModel extends Model {
     ChunkModel.buildMesh(this.chunk, verts, indices, uvs, faces);
     this.mesh = glUtils.createMeshVAO(this.gl, "ch", indices, verts, null, uvs);
 
+    this.setPosition(this.chunk.xo, this.chunk.yo, this.chunk.zo);
     // Push uv indexes
     gl.bindVertexArray(this.mesh.vao);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());

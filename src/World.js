@@ -1,12 +1,16 @@
 import ChunkModel from "../models/ChunkModel.js";
 import Chunk from "./Chunk.js";
 
+import SimplexNoise from "../lib/simplex-noise.js";
+
 class World {
   constructor(gl, x = 16, y = 16, z = 16) {
     this.chunks = [
       new ChunkModel(gl, new Chunk(x, y, z)),
-      new ChunkModel(gl, new Chunk(x, y, z)).setPosition(-16, 0, 0)
+      new ChunkModel(gl, new Chunk(x, y, z, -16, 0, 0))
     ];
+
+    this.simplex = new SimplexNoise();
 
     this.cx = x;
     this.cy = y;
@@ -48,12 +52,18 @@ class World {
 
   rechunk(r) {
     const { chunks } = this;
-
-    chunks.forEach(cr => {
+    const simplex = new SimplexNoise();
+    chunks.forEach((cr, chi) => {
       cr.chunk.cells = cr.chunk.cells.map((c, i) => {
-        const y = (i / (cr.chunk.x * cr.chunk.z)) | 0;
-        if (y < 4) return 1;
-        return Math.random() < r ? ((Math.random() * 2) | 0) + 1 : 0;
+        let x = (i % cr.chunk.x) + cr.chunk.xo
+        let z = (((i / cr.chunk.x) | 0) % cr.chunk.z) + cr.chunk.zo;
+        let y = ((i / (cr.chunk.x * cr.chunk.z)) | 0) + cr.chunk.yo;
+
+        if (y < 1) return 1;
+        //console.log(x, y, z);
+        const v = simplex.noise3D(x / 10, y / 10 , z / 10) * 5;
+        const solid = Math.max(0, Math.min(1, Math.floor(v)));
+        return !solid ? 0 : (v | 0) % 3 == 2 ? 2 : 1;
       });
       cr.rechunk();
     });
