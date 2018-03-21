@@ -148,13 +148,13 @@ function loopy(t, last = t) {
   //const l = new Vec3(...camera.transform.forward);
   //l.scale(-2);
   if (controls.mouse.isDown) {
-    //controls.mouse.isDown = false;
+    controls.mouse.isDown = false;
 
     const cell = world.getCellFromRay(camera.transform.position, r.ray);
     if (cell) {
       cube.setPosition(cell.x, cell.y, cell.z);
       cube.addPosition(0.5, 0.5, 0.5);
-
+      console.log(cell.face);
       const ch = world.setCell(cell.x, cell.y, cell.z, 0);
       if (ch) {
         ch.rechunk();
