@@ -63,9 +63,6 @@ class World {
   getCellFromRay(point, direction) {
     const { x: px, y: py, z: pz } = point;
     let { x: dirX, y: dirY, z: dirZ } = direction;
-    // console.log(point, (direction.y / Math.PI) * 180);
-    // console.log("-----");
-    // console.log("from:", px, pz, "dir:", dirX, dirZ);
     let x = Math.floor(px);
     let y = Math.floor(py);
     let z = Math.floor(pz);
@@ -74,24 +71,33 @@ class World {
     const stepY = Math.sign(dirY);
     const stepZ = Math.sign(dirZ);
 
-    const dtX = stepX / dirX; //1 / (dirX * stepX);
-    const dtY = 1 / (dirY * stepY);
-    const dtZ = stepZ / dirZ; //1 / (dirZ * stepZ);
+    const dtX = 1 / dirX * stepX;
+    const dtY = 1 / dirY * stepY;
+    const dtZ = 1 / dirZ * stepZ;
 
-    let toX = dtX > 0 ? 1 - (px - Math.floor(px)) : px - Math.floor(px);
+    // TODO: simplify!
+    /*
+      The point of toX/Y/Z is to find the number of units to the nearest
+      edge. If the point was in the middle of a cube, then it would be +0.5
+      or -0.5 for each value (depending on direction.)
+
+      The extra case (frac1 vs frac0) is when the initial point is in a
+      negative chunk. I'm sure this can be simplified!
+    */
+    const frac0 = (dir, a) => dir > 0 ? 1 - (a % 1) : a % 1;
+    const frac1 = (dir, a) => dir > 0 ? ((a * -1) % 1) : 1 + (a % 1);
+    let toX = x >= 0 ? frac0(stepX, px) : frac1(stepX, px);
+    let toY = y >= 0 ? frac0(stepY, py) : frac1(stepY, py);
+    let toZ = z >= 0 ? frac0(stepZ, pz) : frac1(stepZ, pz);
+
     toX *= dtX;
-    let toY = dtY < 0 ? 1 - (py - Math.floor(py)) : py - Math.floor(py);
     toY *= dtY;
-    let toZ = dtZ > 0 ? 1 - (pz - Math.floor(pz)) : pz - Math.floor(pz);
     toZ *= dtZ;
 
     let found = false;
     let tries = 20;
     let o = "";
     while (!found && tries-- > 0) {
-      // console.log(dirX.toFixed(2), dtX, toX.toFixed(2));
-      // console.log(dirY.toFixed(2), dtY, toY.toFixed(2));
-      // console.log(dirZ.toFixed(2), dtZ, toZ.toFixed(2));
       if (toX < toY) {
         if (toX < toZ) {
           o += "x1-" + dtX.toFixed(2) + ",";
@@ -120,7 +126,6 @@ class World {
         if (ch) {
           ch.rechunk();
         }
-      //  console.log("hit", o);
         return { x, y, z };
       }
     }
