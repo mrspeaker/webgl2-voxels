@@ -9,5 +9,12 @@ Experiment based on the excellent [SketchpunkLabs WebGL2 series](https://www.you
 * WASD move (or ZQSD for france)
 * SPACE jump (hold to "fly")
 * E regen chunk
-* Left click: delete block
-* Right click/shift click: add block
+* Right click: delete blocks
+* Left click/shift click: add block
+
+## TODO
+
+* Don't let player build themselves into a block.
+* Finish/refactor Ambient Occlusion shadows.
+* Add lighting
+* Refactor collisions

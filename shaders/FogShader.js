@@ -8,12 +8,15 @@ const vss = `#version 300 es
   layout(location=0) in vec3 pos;
   layout(location=2) in vec2 uv;
   layout(location=3) in vec2 sprite;
+  layout(location=4) in float ao;
 
   out vec2 texCoord;
+  out float occ;
 
   const float size = 1.0 / 16.0;
 
   void main() {
+    occ = ao;
     float u = sprite.x * size + uv.x * size;
     float v = sprite.y * size + uv.y * size;
     texCoord = vec2(u, v);
@@ -25,11 +28,13 @@ const fss = `#version 300 es
   precision highp float;
   uniform sampler2D tex0;
   in vec2 texCoord;
+  in float occ;
   out vec4 col;
   void main() {
       float dist = gl_FragCoord.z / gl_FragCoord.w;
-      float fog = 1.0 - (clamp((15.0 - dist) / (15.0 - 0.2), 0.0, 1.0));
-      col = mix(texture(tex0, texCoord), vec4(0.0, 0.0, 0.0, 1.0), fog);
+      float fog = 1.0 - (clamp((25.0 - dist) / (25.0 - 1.0), 0.0, 1.0));
+      vec4 fogmix = mix(texture(tex0, texCoord), vec4(0.0, 0.0, 0.0, 1.0), fog);
+      col= vec4(fogmix.rgb * occ, 1.0);
   }
 `;
 

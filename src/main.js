@@ -130,25 +130,31 @@ function loopy(t, last = t) {
   if (block) {
     cube.setPosition(block.x, block.y, block.z);
     cube.addPosition(0.5, 0.5, 0.5);
-    const isAddBlock = controls.keys.isDown(16) || controls.mouse.isRight;
+    const isAddBlock = controls.keys.isDown(16) || !controls.mouse.isRight;
     if (isAddBlock) {
       cube.addPosition(...Chunk.FACES[block.face].n);
     }
     if (controls.mouse.isDown) {
-      controls.mouse.isDown = false;
+      if (!controls.mouse.isRight) {
+        controls.mouse.isDown = false;
+      }
 
       // Add or remove block
       const n = Chunk.FACES[block.face].n;
       const xo = isAddBlock ? n[0] : 0;
       const yo = isAddBlock ? n[1] : 0;
       const zo = isAddBlock ? n[2] : 0;
-      const ch = world.setCell(
-        block.x + xo,
-        block.y + yo,
-        block.z + zo,
-        isAddBlock ? 1 : 0
-      );
-      if (ch) ch.rechunk();
+      const diggingGround = !isAddBlock && block.y === 0;
+
+      if (!diggingGround) {
+        const ch = world.setCell(
+          block.x + xo,
+          block.y + yo,
+          block.z + zo,
+          isAddBlock ? 2 : 0
+        );
+        if (ch) ch.rechunk();
+      }
     }
   }
 
