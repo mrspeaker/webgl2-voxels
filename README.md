@@ -9,8 +9,9 @@ Experiment based on the excellent [SketchpunkLabs WebGL2 series](https://www.you
 * WASD move (or ZQSD for france)
 * SPACE jump (hold to "fly")
 * E regen chunk
-* Right click: delete blocks
-* Left click/shift click: add block
+* Left click: add block
+* Right / shift click: delete blocks
+* Right + shift click: destructo mode
 
 ## TODO
 

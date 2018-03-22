@@ -130,12 +130,17 @@ function loopy(t, last = t) {
   if (block) {
     cube.setPosition(block.x, block.y, block.z);
     cube.addPosition(0.5, 0.5, 0.5);
-    const isAddBlock = controls.keys.isDown(16) || !controls.mouse.isRight;
+    const isShiftKey = controls.keys.isDown(16);
+    const isRightClick = controls.mouse.isRight;
+    const isDestructoMode = isShiftKey && isRightClick;
+
+    const isAddBlock = !isShiftKey && !isRightClick;
     if (isAddBlock) {
       cube.addPosition(...Chunk.FACES[block.face].n);
     }
     if (controls.mouse.isDown) {
-      if (!controls.mouse.isRight) {
+      // Limit to one-per-click, except destructo mode
+      if (!isDestructoMode) {
         controls.mouse.isDown = false;
       }
 
