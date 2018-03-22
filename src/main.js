@@ -30,7 +30,7 @@ const controls = {
 const fogShader = new FogShader(gl, camera.projectionMatrix);
 const gridAxis = GridAxis.create(gl);
 const gridShader = new GridAxisShader(gl, camera.projectionMatrix);
-const skybox = Cube.create(gl, "Skybox", 100, 100, 100);
+const skybox = Cube.create(gl, "Skybox", 300, 300, 300);
 const skyboxShader = new SkyboxShader(gl, camera.projectionMatrix);
 
 const world = new World(gl);
