@@ -19,7 +19,7 @@ class Player {
   update(dt) {
     const { camera, world, pos, controls, vel, acc, speed } = this;
     const { transform } = camera;
-    const { keys, mouse } = controls;
+    const { keys } = controls;
 
     let xo = 0;
     let yo = 0;
@@ -106,8 +106,7 @@ class Player {
       { x: pos.x + w, y: pos.y + h, z: pos.z - w, top: true },
       { x: pos.x - w, y: pos.y + h, z: pos.z + w, top: true },
       { x: pos.x + w, y: pos.y + h, z: pos.z + w, top: true }
-    ].forEach(({ x, y, z, g, m, t }) => {
-      let block;
+    ].forEach(({ x, y, z, top }) => {
       if (xo != 0 && world.getCell(x + xo, y, z)) xo = 0;
       if (zo != 0 && world.getCell(x + xo, y, z + zo)) zo = 0;
       if (yo != 0 && world.getCell(x + xo, y + yo, z + zo)) {

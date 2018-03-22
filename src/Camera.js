@@ -1,4 +1,4 @@
-import m4 from "../lib/m4.js";
+import m4 from "../vendor/m4.js";
 import Transform from "../lib/Transform.js";
 
 class Camera {

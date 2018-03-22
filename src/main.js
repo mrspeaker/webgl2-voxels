@@ -1,5 +1,4 @@
 import glUtils from "../lib/glUtils.js";
-import Vec3 from "../lib/Vec3.js";
 import Cube from "../models/Cube.js";
 import Chunk from "./Chunk.js";
 import GridAxis from "../models/GridAxis.js";

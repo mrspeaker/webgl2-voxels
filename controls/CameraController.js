@@ -21,7 +21,7 @@ class CameraController {
     this.isDown = false;
     this.isRight = false;
 
-    // TODO: simplify this class with pointerlock.
+    // TODO: simplify this class no we've added pointerlock.
 
     this.canvas.addEventListener(
       "mousedown",
@@ -60,7 +60,7 @@ class CameraController {
     this.isRight = e.which === 3;
   }
 
-  onMouseUp(e) {
+  onMouseUp() {
     this.isDown = false;
     this.isRight = false;
   }
@@ -75,14 +75,12 @@ class CameraController {
       rotateRate,
       canvas,
       offsetX,
-      offsetY,
-      prevX,
-      prevY
+      offsetY
     } = this;
     const x = e.pageX - offsetX;
     const y = e.pageY - offsetY;
-    const dx = e.movementX; // x - prevX; TODO: changed to pointerlock. cleanup.
-    const dy = e.movementY; //y - prevY;
+    const dx = e.movementX;
+    const dy = e.movementY;
 
     if (!e.shiftKey) {
       camera.transform.rotation.y += dx * (rotateRate / canvas.width);

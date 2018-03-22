@@ -73,7 +73,7 @@ class Shader {
   }
 
   renderModel(model) {
-    const { gl, uniforms } = this;
+    const { gl } = this;
     const { mesh, transform } = model;
     this.setModel(transform.view);
 

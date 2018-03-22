@@ -1,11 +1,12 @@
 import ChunkModel from "../models/ChunkModel.js";
 import Chunk from "./Chunk.js";
 
-import SimplexNoise from "../lib/simplex-noise.js";
+import SimplexNoise from "../vendor/simplex-noise.js";
+import spiral2D from "../lib/spiral2D.js";
 
 class World {
   constructor(gl, x = 16, y = 16, z = 16) {
-    const spiral = World.spiral2D(3);
+    const spiral = spiral2D(3);
     this.chunks = spiral.map(
       s => new ChunkModel(gl, new Chunk(x, y, z, s[0], 0, s[1]))
     );
@@ -14,35 +15,6 @@ class World {
     this.cx = x;
     this.cy = y;
     this.cz = z;
-  }
-
-  static spiral2D(radius = 2) {
-    let w = 0;
-    let h = 0;
-    let wdir = 1;
-    let hdir = 1;
-    let x = 0;
-    let y = 0;
-    const path = [];
-
-    // Spiral pattern
-    while (radius--) {
-      w++;
-      h++;
-
-      // Moving left/up
-      for (; x < w * wdir; x += wdir) path.push([x, y]);
-      for (; y < h * hdir; y += hdir) path.push([x, y]);
-      wdir = wdir * -1;
-      hdir = hdir * -1;
-
-      // Moving right/down
-      for (; x > w * wdir; x += wdir) path.push([x, y]);
-      for (; y > h * hdir; y += hdir) path.push([x, y]);
-      wdir = wdir * -1;
-      hdir = hdir * -1;
-    }
-    return path;
   }
 
   update() {}

@@ -1,4 +1,3 @@
-import m4 from "../lib/m4.js";
 import Model from "./Model.js";
 
 class GridAxis {
