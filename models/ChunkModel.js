@@ -19,6 +19,7 @@ class ChunkModel extends Model {
     ChunkModel.buildMesh(this.chunk, verts, indices, uvs, faces);
     this.mesh = glUtils.createMeshVAO(this.gl, "ch", indices, verts, null, uvs);
     this.setPosition(this.chunk.xo, this.chunk.yo, this.chunk.zo);
+
     // Push uv indexes
     gl.bindVertexArray(this.mesh.vao);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
@@ -37,16 +38,16 @@ class ChunkModel extends Model {
       const z = ((i / chunk.x) | 0) % chunk.z;
       const y = (i / (chunk.x * chunk.z)) | 0;
       // Check each face direction
-      let xf; // = 4; //Math.random() * 2 * 2 | 0;
-      let yf; // = 1; //Math.random() * 2 * 2 | 0;
-      const oh = [
+      let xf;
+      let yf;
+      const faceUVs = [
         [4, 1, 4, 1, 4, 1, 4, 1, 5, 1, 5, 1],
         [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
         [4, 0, 3, 2, 4, 0, 3, 2, 4, 0, 4, 0]
       ];
       for (let j = 0; j < 6; j++) {
-        xf = oh[idx - 1][j * 2];
-        yf = oh[idx - 1][j * 2 + 1];
+        xf = faceUVs[idx - 1][j * 2];
+        yf = faceUVs[idx - 1][j * 2 + 1];
         if (!chunk.get(x, y, z, j)) {
           // Append face
           ChunkModel.appendQuad(chunk, j, x, y, z, verts, inds, uvs);
@@ -62,7 +63,7 @@ class ChunkModel extends Model {
     const indOffset = verts.length / 3;
 
     if (face.nOffset) {
-      // MOve origin of quad by normal pos
+      // Move origin of quad by normal pos
       x += face.n[0];
       y += face.n[1];
       z += face.n[2];

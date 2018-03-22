@@ -109,10 +109,10 @@ class World {
     toZ *= dtZ;
 
     let found = false;
-    let tries = 20;
+    let maxDist = 20;
     let face;
 
-    while (!found && tries-- > 0) {
+    while (!found && maxDist-- > 0) {
       if (toX < toY) {
         if (toX < toZ) {
           x += stepX;

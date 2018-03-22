@@ -1,7 +1,7 @@
 import Transform from "../lib/Transform.js";
 
 class Model {
-  constructor (mesh) {
+  constructor(mesh) {
     this.transform = new Transform();
     this.mesh = mesh;
   }
@@ -40,7 +40,6 @@ class Model {
     this.transform.updateMatrix();
     return this;
   }
-
 }
 
 export default Model;

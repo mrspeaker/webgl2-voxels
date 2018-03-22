@@ -1,17 +1,18 @@
-import glUtils from "../lib/glUtils.js";
-import Cube from "../models/Cube.js";
-import Chunk from "./Chunk.js";
-import GridAxis from "../models/GridAxis.js";
 import GridAxisShader from "../shaders/GridAxisShader.js";
 import SkyboxShader from "../shaders/SkyboxShader.js";
 import FogShader from "../shaders/FogShader.js";
-import Camera from "./Camera.js";
+
 import CameraController from "../controls/CameraController.js";
 import KeyboardControls from "../controls/KeyboardControls.js";
 
-import Player from "./Player.js";
+import Camera from "./Camera.js";
+import Chunk from "./Chunk.js";
 import World from "./World.js";
+import Player from "./Player.js";
+import Cube from "../models/Cube.js";
+import GridAxis from "../models/GridAxis.js";
 import Ray from "../lib/Ray.js";
+import glUtils from "../lib/glUtils.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");
 glUtils.fitScreen(gl);
@@ -34,7 +35,6 @@ const skyboxShader = new SkyboxShader(gl, camera.projectionMatrix);
 
 const world = new World(gl);
 const player = new Player(controls, camera, world);
-
 const ray = new Ray(camera);
 const cube = Cube.create(gl);
 cube.setScale(1.01);
@@ -118,33 +118,34 @@ function loopy(t, last = t) {
     world.gen();
   }
 
+  // Get block player is looking at
   const r = ray.fromScreen(
     gl.canvas.width / 2,
     gl.canvas.height / 2,
     gl.canvas.width,
     gl.canvas.height
   );
-  const cell = world.getCellFromRay(camera.transform.position, r.ray);
+  const block = world.getCellFromRay(camera.transform.position, r.ray);
 
-  if (cell) {
-    cube.setPosition(cell.x, cell.y, cell.z);
+  if (block) {
+    cube.setPosition(block.x, block.y, block.z);
     cube.addPosition(0.5, 0.5, 0.5);
     const isAddBlock = controls.keys.isDown(16) || controls.mouse.isRight;
     if (isAddBlock) {
-      cube.addPosition(...Chunk.FACES[cell.face].n);
+      cube.addPosition(...Chunk.FACES[block.face].n);
     }
     if (controls.mouse.isDown) {
       controls.mouse.isDown = false;
 
       // Add or remove block
-      const n = Chunk.FACES[cell.face].n;
+      const n = Chunk.FACES[block.face].n;
       const xo = isAddBlock ? n[0] : 0;
       const yo = isAddBlock ? n[1] : 0;
       const zo = isAddBlock ? n[2] : 0;
       const ch = world.setCell(
-        cell.x + xo,
-        cell.y + yo,
-        cell.z + zo,
+        block.x + xo,
+        block.y + yo,
+        block.z + zo,
         isAddBlock ? 1 : 0
       );
       if (ch) ch.rechunk();
