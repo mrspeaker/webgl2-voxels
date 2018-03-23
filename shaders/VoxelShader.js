@@ -31,8 +31,8 @@ const fss = `#version 300 es
   in float occ;
   out vec4 col;
   void main() {
-      float near = 20.0;
-      float far = 75.0;
+      float near = 40.0;
+      float far = 80.0;
       float dist = gl_FragCoord.z / gl_FragCoord.w;
       float fog = 1.0 - (clamp((far - dist) / (far - near), 0.0, 1.0));
       vec4 fogmix = mix(texture(tex0, texCoord), vec4(135.0/255.0, 165.0/255.0, 1.0, 1.0), fog);
