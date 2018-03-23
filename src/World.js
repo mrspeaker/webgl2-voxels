@@ -57,9 +57,10 @@ class World {
     chunks.forEach(cr => {
       const { chunk } = cr;
       const AIR = 0;
+      const GRASS = 1;
       const STONE = 2;
-      const WOOD = 1;
-      const BOOKS = 3;
+      const TREE = 3;
+      const BOOKS = 4;
       chunk.cells = chunk.cells.map((c, i) => {
         let x = i % chunk.x + chunk.xo;
         let z = ((i / chunk.x) | 0) % chunk.z + chunk.zo;
@@ -68,9 +69,9 @@ class World {
         if (y < 1) return STONE; // Ground
         const v = simplex.noise3D(x / 10, y / 10, z / 10) * 8;
         const solid = Math.max(0, Math.min(1, Math.floor(v)));
-        const isBooks = (v | 0) % 3 == 2;
-        const isWood = (v / 3) | (0 == 1);
-        return !solid ? AIR : isWood ? WOOD : isBooks ? BOOKS : STONE;
+        const isStone = (v / 3) | (0 == 1);
+        const isWood = (v | 0) % 3 == 2;
+        return !solid ? AIR : isStone ? STONE : isWood ? TREE : GRASS;
       });
       cr.rechunk();
     });

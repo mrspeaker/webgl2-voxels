@@ -23,7 +23,7 @@ const fss = `#version 300 es
 
   out vec4 col;
   void main() {
-    col = texture(sky, texCoord) * vec4(0.3, 0.3, 0.3, 1.0);
+    col = texture(sky, texCoord);// * vec4(0.3, 0.3, 0.3, 1.0);
   }
 `;
 

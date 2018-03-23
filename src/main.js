@@ -1,6 +1,6 @@
 import GridAxisShader from "../shaders/GridAxisShader.js";
 import SkyboxShader from "../shaders/SkyboxShader.js";
-import FogShader from "../shaders/FogShader.js";
+import VoxelShader from "../shaders/VoxelShader.js";
 
 import CameraController from "../controls/CameraController.js";
 import KeyboardControls from "../controls/KeyboardControls.js";
@@ -28,7 +28,7 @@ const controls = {
 };
 
 // Shaders
-const fogShader = new FogShader(gl, camera.projectionMatrix);
+const voxelShader = new VoxelShader(gl, camera.projectionMatrix);
 const gridAxis = GridAxis.create(gl);
 const gridShader = new GridAxisShader(gl, camera.projectionMatrix);
 const skybox = Cube.create(gl, "Skybox", 300, 300, 300);
@@ -57,12 +57,12 @@ function preload() {
   return Promise.all(
     [
       { name: "blocks", src: "res/mine.png", type: "tex" },
-      { name: "cube0", src: "res/whirlpool_rt.png", type: "img" },
-      { name: "cube1", src: "res/whirlpool_lf.png", type: "img" },
-      { name: "cube2", src: "res/whirlpool_up.png", type: "img" },
-      { name: "cube3", src: "res/whirlpool_dn.png", type: "img" },
-      { name: "cube4", src: "res/whirlpool_bk.png", type: "img" },
-      { name: "cube5", src: "res/whirlpool_ft.png", type: "img" }
+      { name: "cube0", src: "res/mc_rt.png", type: "img" },
+      { name: "cube1", src: "res/mc_lf.png", type: "img" },
+      { name: "cube2", src: "res/mc_up.png", type: "img" },
+      { name: "cube3", src: "res/mc_dn.png", type: "img" },
+      { name: "cube4", src: "res/mc_bk.png", type: "img" },
+      { name: "cube5", src: "res/mc_ft.png", type: "img" }
     ].map(
       ({ name, src, type }) =>
         new Promise(res => {
@@ -87,7 +87,7 @@ function initialize(res) {
   const cubeImg = imgs.filter(i => i.name.startsWith("cube")).map(i => i.img);
   glUtils.loadCubeMap(gl, "skybox", cubeImg);
   skyboxShader.setCube(glUtils.textures.skybox);
-  fogShader.setTexture(glUtils.textures.blocks);
+  voxelShader.setTexture(glUtils.textures.blocks);
 
   // Initialize webgl
   gl.clearColor(1, 1, 1, 1.0);
@@ -157,7 +157,7 @@ function loopy(t, last = t) {
           block.x + xo,
           block.y + yo,
           block.z + zo,
-          isAddBlock ? 2 : 0
+          isAddBlock ? 3 : 0
         );
         if (ch) ch.rechunk();
       }
@@ -182,13 +182,13 @@ function loopy(t, last = t) {
     .setCamera(camera.view)
     .renderModel(gridAxis.preRender());
 
-  fogShader
+  voxelShader
     .activate()
     .preRender()
     .setCamera(camera.view)
     .renderModel(cube.preRender());
 
   world.chunks.forEach(cr => {
-    fogShader.renderModel(cr.preRender());
+    voxelShader.renderModel(cr.preRender());
   });
 }
