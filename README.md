@@ -20,4 +20,3 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 * Fix texture seams
 * Don't tie run speed to player normal
 
-[![webgl2 voxels](https://user-images.githubusercontent.com/129330/37841324-deae5a38-2e95-11e8-9adc-453e1dce4bea.png)](https://mrspeaker.github.io/webgl2-voxels)
