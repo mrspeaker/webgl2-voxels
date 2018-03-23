@@ -173,6 +173,7 @@ function loopy(t, last = t) {
   // Render
   skyboxShader
     .activate()
+    .setTime(t / 80)
     .preRender()
     .setCamera(camera.view)
     .renderModel(skybox);

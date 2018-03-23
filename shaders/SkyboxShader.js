@@ -20,10 +20,15 @@ const fss = `#version 300 es
   precision highp float;
   in vec3 texCoord;
   uniform samplerCube sky;
+  uniform float t;
 
   out vec4 col;
   void main() {
-    col = texture(sky, texCoord);// * vec4(0.3, 0.3, 0.3, 1.0);
+    vec4 tx = texture(sky, texCoord);
+    float rat = 1.0 - ((texCoord.y + 150.0) / 250.0);
+    float m = max(0.0, rat - 0.2);
+    float t2  = t / 5.0;
+    col = mix(tx, vec4(sin(((texCoord.y + t2) * (texCoord.x + t2)) / 300.0), cos((texCoord.z + t2)/ 50.0), 0.0, 1.0) * 0.5, m);
   }
 `;
 
@@ -36,6 +41,13 @@ class DefaultShader extends Shader {
 
   setCube(skyTex) {
     this.skyTex = skyTex;
+    return this;
+  }
+
+  setTime(t) {
+    const { uniforms, gl } = this;
+    gl.uniform1f(uniforms.t, t);
+    return this;
   }
 
   preRender() {
