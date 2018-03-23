@@ -2,7 +2,7 @@
 
 Voxel-boxel-o. [Test in out your browser](https://mrspeaker.github.io/webgl2-voxels) (Require native JavaScript module support).
 
-[![webgl2 voxels](https://user-images.githubusercontent.com/129330/37841324-deae5a38-2e95-11e8-9adc-453e1dce4bea.png)](https://mrspeaker.github.io/webgl2-voxels)
+[![webgl2 voxels](https://user-images.githubusercontent.com/129330/37849134-edc55686-2eac-11e8-88e4-317d98fc3b9c.png)](https://mrspeaker.github.io/webgl2-voxels)
 
 Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.youtube.com/channel/UCSnyjB_8iVxi2ZAfn_1L6tA).
 
@@ -19,3 +19,5 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 * Refactor collisions
 * Fix texture seams
 * Don't tie run speed to player normal
+
+[![webgl2 voxels](https://user-images.githubusercontent.com/129330/37841324-deae5a38-2e95-11e8-9adc-453e1dce4bea.png)](https://mrspeaker.github.io/webgl2-voxels)
