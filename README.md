@@ -15,9 +15,7 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 
 ## TODO
 
-* Don't let player build themselves into a block.
 * Fix ambient Occlusion on chunk borders
 * Refactor collisions
 * Fix texture seams
 * Don't tie run speed to player normal
-

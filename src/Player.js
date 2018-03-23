@@ -16,6 +16,29 @@ class Player {
     camera.transform.rotation.y = 0;
   }
 
+  // See if you are standing in a cell.
+  testCell(cx, cy, cz) {
+    const { pos } = this;
+    const w = this.w / 2;
+    const h = this.h / 2;
+    return [
+      { x: pos.x - w, y: pos.y - h, z: pos.z - w },
+      { x: pos.x + w, y: pos.y - h, z: pos.z - w },
+      { x: pos.x - w, y: pos.y - h, z: pos.z + w },
+      { x: pos.x + w, y: pos.y - h, z: pos.z + w },
+      { x: pos.x - w, y: pos.y + 0, z: pos.z - w },
+      { x: pos.x + w, y: pos.y + 0, z: pos.z - w },
+      { x: pos.x - w, y: pos.y + 0, z: pos.z + w },
+      { x: pos.x + w, y: pos.y + 0, z: pos.z + w },
+      { x: pos.x - w, y: pos.y + h, z: pos.z - w, top: true },
+      { x: pos.x + w, y: pos.y + h, z: pos.z - w, top: true },
+      { x: pos.x - w, y: pos.y + h, z: pos.z + w, top: true },
+      { x: pos.x + w, y: pos.y + h, z: pos.z + w, top: true }
+    ].some(({ x, y, z }) => {
+      return Math.floor(x) == cx && Math.floor(y) == cy && Math.floor(z) == cz;
+    });
+  }
+
   update(dt) {
     const { camera, world, pos, controls, vel, acc, speed } = this;
     const { transform } = camera;

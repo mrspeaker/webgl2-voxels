@@ -153,13 +153,16 @@ function loopy(t, last = t) {
       const diggingGround = !isAddBlock && block.y === 0;
 
       if (!diggingGround) {
-        const ch = world.setCell(
-          block.x + xo,
-          block.y + yo,
-          block.z + zo,
-          isAddBlock ? 3 : 0
-        );
-        if (ch) ch.rechunk();
+        if (!player.testCell(block.x + xo, block.y + yo, block.z + zo)) {
+          const ch = world.setCell(
+            block.x + xo,
+            block.y + yo,
+            block.z + zo,
+            isAddBlock ? 3 : 0
+          );
+          if (ch) ch.rechunk();
+        }
+
       }
     }
   }
