@@ -5,7 +5,7 @@ class Player {
     this.controls = controls;
     this.world = world;
     this.camera = camera;
-    this.pos = new Vec3(0, 20, -10);
+    this.pos = new Vec3(0.5, 20, 0.5);
     this.acc = new Vec3();
     this.vel = new Vec3();
 
@@ -13,7 +13,7 @@ class Player {
     this.h = 1.7;
     this.speed = 6;
 
-    camera.transform.rotation.y = 180;
+    camera.transform.rotation.y = 0;
   }
 
   update(dt) {

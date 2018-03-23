@@ -18,6 +18,7 @@ const gl = document.querySelector("canvas").getContext("webgl2");
 glUtils.fitScreen(gl);
 gl.canvas.onclick = () => gl.canvas.requestPointerLock();
 window.addEventListener("resize", () => glUtils.fitScreen(gl), false);
+const deb1 = document.querySelector("#deb1");
 
 const camera = new Camera(gl);
 camera.mode = Camera.MODE_FREE;
@@ -162,6 +163,12 @@ function loopy(t, last = t) {
       }
     }
   }
+
+  const chunk = world.getChunk(player.pos.x, player.pos.y, player.pos.z);
+  deb1.innerHTML = `
+    ${player.pos.x.toFixed(2)}:${player.pos.y.toFixed(2)}:${player.pos.z.toFixed(2)}<br/>
+    ${!chunk ? "-" : `${chunk.chunk.chX}:${chunk.chunk.chY}:${chunk.chunk.chZ}`}<br/>
+  `;
 
   // Render
   skyboxShader

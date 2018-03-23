@@ -3,6 +3,9 @@ class Chunk {
     this.x = x;
     this.y = y;
     this.z = z;
+    this.chX = xo;
+    this.chY = yo;
+    this.chZ = zo;
     this.xo = xo * x;
     this.yo = yo * y;
     this.zo = zo * z;
