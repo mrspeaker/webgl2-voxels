@@ -27,8 +27,7 @@ const fss = `#version 300 es
     vec4 tx = texture(sky, texCoord);
     float rat = 1.0 - ((texCoord.y + 150.0) / 250.0);
     float m = max(0.0, rat - 0.2);
-    float t2  = t / 5.0;
-    col = mix(tx, vec4(sin(((texCoord.y + t2) * (texCoord.x + t2)) / 300.0), cos((texCoord.z + t2)/ 50.0), 0.0, 1.0) * 0.5, m);
+    col = mix(tx, vec4(sin((texCoord.y * texCoord.x) * abs(sin(t / 100.0)) *  300.0), cos((texCoord.z) / 50.0), 0.0, 1.0) * 0.5, m);
   }
 `;
 
