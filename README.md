@@ -2,7 +2,7 @@
 
 Voxel-boxel-o. [Test in out your browser](https://mrspeaker.github.io/webgl2-voxels) (Require native JavaScript module support).
 
-[![webgl2 voxels](https://user-images.githubusercontent.com/129330/37745057-24c43900-2d49-11e8-8f2a-eeda1d3072d7.png)](https://mrspeaker.github.io/webgl2-voxels)
+[![webgl2 voxels](https://user-images.githubusercontent.com/129330/37841324-deae5a38-2e95-11e8-9adc-453e1dce4bea.png)](https://mrspeaker.github.io/webgl2-voxels)
 
 Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.youtube.com/channel/UCSnyjB_8iVxi2ZAfn_1L6tA).
 
@@ -18,3 +18,6 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 * Don't let player build themselves into a block.
 * Fix ambient Occlusion on chunk borders
 * Refactor collisions
+* Fix texture seams
+* Don't tie run speed to player normal
+
