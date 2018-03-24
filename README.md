@@ -8,7 +8,7 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 
 * WASD move (or ZQSD for france)
 * SPACE jump (hold to "fly")
-* E regen chunk
+* E create new world
 * Left click: add block
 * Shift click: delete block
 * Right click: destructo mode!
@@ -18,3 +18,4 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 * Fix ambient Occlusion on chunk borders
 * Refactor collisions
 * Fix texture seams
+* move skymap with player

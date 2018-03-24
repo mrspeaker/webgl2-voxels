@@ -57,6 +57,7 @@ class ChunkModel extends Model {
       // AO testing. TODO: only need to get 8 cells around
       // block ONCE and use them (don't re-fetch). This is
       // more efficient and will work accross chunk boundaries.
+      // (also, move this to appendQuad)
       const addAO = (s1x, s1y, s1z, s2x, s2y, s2z, cx, cy, cz, debug) => {
         const side1 = chunk.get(x + s1x, y + s1y, z + s1z) ? 1 : 0;
         const side2 = chunk.get(x + s2x, y + s2y, z + s2z) ? 1 : 0;
@@ -77,6 +78,7 @@ class ChunkModel extends Model {
 
           // Experimenting with Ambient Occlusion
           // Get the "side" and "corner" blocks for each vertex.
+          // TODO: Should be able to do this with an algo...
           for (let k = 0; k < 4; k++) {
             if (j === Chunk.UP) {
               ao.push(addAO(...[

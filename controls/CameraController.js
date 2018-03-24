@@ -60,7 +60,7 @@ class CameraController {
   }
 
   onMouseMove(e) {
-    const { camera, rotateRate, canvas} = this;
+    const { camera, rotateRate, canvas } = this;
     const dx = e.movementX;
     const dy = e.movementY;
 

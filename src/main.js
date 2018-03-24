@@ -96,8 +96,8 @@ function initialize(res) {
   gl.depthFunc(gl.LEQUAL);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-  // Set up initial chunks
-  world.gen();
+  // Set up initial chunks with density 10
+  world.gen(10);
 }
 
 function loopy(t, last = t) {
@@ -107,16 +107,19 @@ function loopy(t, last = t) {
   player.update(dt);
   world.update(dt);
 
+  const { pos } = player;
+
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
   // Sync camera to player
-  camera.transform.position.setv(player.pos).add(0, player.h / 2, 0);
+  camera.transform.position.setv(pos).add(0, player.h / 2, 0);
   camera.updateViewMatrix();
 
   // E key to gen new chunk
   if (controls.keys.isDown(69)) {
     controls.keys[69] = false;
     world.gen();
+    pos.y = 40;
   }
 
   // Get block player is looking at
@@ -164,16 +167,15 @@ function loopy(t, last = t) {
           );
           if (ch) ch.rechunk();
         }
-
       }
     }
   }
 
-  const chunk = world.getChunk(player.pos.x, player.pos.y, player.pos.z);
-  deb1.innerHTML = `
-    ${player.pos.x.toFixed(2)}:${player.pos.y.toFixed(2)}:${player.pos.z.toFixed(2)}<br/>
-    ${!chunk ? "-" : `${chunk.chunk.chX}:${chunk.chunk.chY}:${chunk.chunk.chZ}`}<br/>
-  `;
+  const chunk = world.getChunk(pos.x, pos.y, pos.z);
+  const p = `${pos.x.toFixed(2)}:${pos.y.toFixed(2)}:${pos.z.toFixed(2)}`;
+  deb1.innerHTML = `${p}<br/>${
+    !chunk ? "-" : `${chunk.chunk.chX}:${chunk.chunk.chY}:${chunk.chunk.chZ}`
+  }<br/>`;
 
   // Render
   skyboxShader

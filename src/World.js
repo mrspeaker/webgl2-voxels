@@ -51,25 +51,26 @@ class World {
     return chunk;
   }
 
-  gen() {
+  gen(initDensity) {
     const { chunks } = this;
     const simplex = new SimplexNoise();
+    const density = initDensity || (Math.random() * Math.random() * 40) + 6;
     chunks.forEach(cr => {
       const { chunk } = cr;
       const AIR = 0;
       const TREE = 1;
       const GRASS = 2;
       const STONE = 3;
-      const BOOKS = 4;
+      //const BOOKS = 4;
       chunk.cells = chunk.cells.map((c, i) => {
         let x = i % chunk.x + chunk.xo;
         let z = ((i / chunk.x) | 0) % chunk.z + chunk.zo;
         let y = ((i / (chunk.x * chunk.z)) | 0) + chunk.yo;
 
         if (y < 1) return GRASS; // Ground
-        const bowl = (Math.sin(x / 4) * Math.cos(z / 4)) * 16;
-        let v = simplex.noise3D(x / 10, y / 10, z / 10) * 8;
-        //if (y < bowl) v = 0;
+        let v = simplex.noise3D(x / density, y / density, z / density) * 8;
+        //const bowl = (Math.sin(x / 4) * Math.cos(z / 4)) * 16;
+        //if (y <= bowl) v = 0;
         const solid = Math.max(0, Math.min(1, Math.floor(v)));
         const isStone = (v / 3) | (0 == 1);
         const isWood = (v | 0) % 3 == 2;
