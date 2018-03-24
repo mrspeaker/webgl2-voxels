@@ -4,19 +4,11 @@ class CameraController {
     this.camera = camera;
 
     this.rotateRate = -200;
-    this.panRate = 5;
     this.zoomRate = 200;
 
     const box = this.canvas.getBoundingClientRect();
     this.offsetX = box.left;
     this.offsetY = box.right;
-
-    this.initX = 0;
-    this.initY = 0;
-    this.prevX = 0;
-    this.prevY = 0;
-    this.x = 0;
-    this.y = 0;
 
     this.isDown = false;
     this.isRight = false;
@@ -44,9 +36,13 @@ class CameraController {
       this.onMouseWheel.bind(this),
       false
     );
-    this.canvas.addEventListener("contextmenu", e => {
-      e.preventDefault();
-    }, false);
+    this.canvas.addEventListener(
+      "contextmenu",
+      e => {
+        e.preventDefault();
+      },
+      false
+    );
   }
 
   getMouseVec2(e) {
@@ -54,8 +50,6 @@ class CameraController {
   }
 
   onMouseDown(e) {
-    this.initX = this.prevX = e.pageX - this.offsetX;
-    this.initY = this.prevY = e.pageY - this.offsetY;
     this.isDown = true;
     this.isRight = e.which === 3;
   }
@@ -66,31 +60,16 @@ class CameraController {
   }
 
   onMouseMove(e) {
-    if (!this.isDown) {
-      //return;
-    }
-    const {
-      camera,
-      panRate,
-      rotateRate,
-      canvas,
-      offsetX,
-      offsetY
-    } = this;
-    const x = e.pageX - offsetX;
-    const y = e.pageY - offsetY;
+    const { camera, rotateRate, canvas} = this;
     const dx = e.movementX;
     const dy = e.movementY;
 
-    if (!e.shiftKey) {
-      camera.transform.rotation.y += dx * (rotateRate / canvas.width);
-      camera.transform.rotation.x += dy * (rotateRate / canvas.height);
-    } else {
-      camera.panX(-dx * (panRate / canvas.width));
-      camera.panY(dy * (panRate / canvas.width));
-    }
-    this.prevX = x;
-    this.prevY = y;
+    camera.transform.rotation.x += dy * (rotateRate / canvas.height);
+    camera.transform.rotation.x = Math.max(
+      -90,
+      Math.min(90, camera.transform.rotation.x)
+    );
+    camera.transform.rotation.y += dx * (rotateRate / canvas.width);
   }
 
   onMouseWheel(e) {
