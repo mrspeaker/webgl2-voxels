@@ -10,13 +10,11 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 * SPACE jump (hold to "fly")
 * E regen chunk
 * Left click: add block
-* Right / shift click: delete blocks
-* Right + shift click: destructo mode
+* Shift click: delete block
+* Right click: destructo mode!
 
 ## TODO
 
 * Fix ambient Occlusion on chunk borders
 * Refactor collisions
 * Fix texture seams
-* Don't tie run speed to player normal
-* Add noscript msg

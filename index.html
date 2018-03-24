@@ -8,6 +8,8 @@
         padding: 0;
         margin: 0;
         overflow: hidden;
+        background-color: rgb(135, 165, 255);
+        font-family: monospace;
       }
       #overlay {
         position: absolute;
@@ -28,6 +30,16 @@
         right: 0;
         margin: auto auto;
       }
+      .anotherVisitor {
+        color: #242;
+        margin: 50px auto;
+        width: 30em;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
     </style>
   </head>
   <body>
@@ -39,11 +51,17 @@
       <div><strong>SPACE</strong>: jump (hold to fly)</div>
       <div><strong>E</strong>: re-gen chunk</div>
       <div><strong>left click</strong>: add block</div>
-      <div><strong>right / shift click</strong>: delete blocks</div>
-      <div><strong>right + shift click</strong>: destructo mode</div>
+      <div><strong>right click</strong>: destructo mode</div>
+      <div><strong>shift click</strong>: delete block</div>
       <div><a href="https://github.com/mrspeaker/webgl2-voxels">github repo</a></div>
       <div><span id="deb1"></span></div>
     </div>
     <img id="cross" src="res/cross.png" />
+    <noscript>
+      <p class="anotherVisitor">Welcome! This is WebGL2 experiment - the classic minecraft world.
+        If you'd like to explore it, you will need to enable JavaScript.
+        Go on, just for a minute!
+      </p>
+    </noscript>
   </body>
 </html>

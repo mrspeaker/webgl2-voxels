@@ -48,12 +48,13 @@ class Player {
     let yo = 0;
     let zo = 0;
 
-    // TODO: using transform.forward/right means slow speed when looking down.
     if (keys.isDown(87 /*w*/) || keys.isDown(90 /*q*/) || keys.isDown(83)) {
       const dir = keys.isDown(83) ? 1 : -1;
       const v = dt * speed * dir;
-      xo += transform.forward[0] * v;
-      zo += transform.forward[2] * v;
+      // Get 2D direction
+      const angle = Math.atan2(transform.forward[2], transform.forward[0]);
+      xo += Math.cos(angle) * v;
+      zo += Math.sin(angle) * v;
     }
     if (
       keys.isDown(65 /*a*/) ||
