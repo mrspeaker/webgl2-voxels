@@ -19,4 +19,4 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 * Refactor collisions
 * Fix texture seams
 * Don't tie run speed to player normal
-
+* Add noscript msg

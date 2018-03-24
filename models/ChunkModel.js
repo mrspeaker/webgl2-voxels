@@ -17,8 +17,9 @@ class ChunkModel extends Model {
     const uvs = [];
     const faces = [];
     const ao = [];
-    ChunkModel.buildMesh(this.chunk, verts, indices, uvs, faces, ao);
-    this.mesh = glUtils.createMeshVAO(this.gl, "ch", indices, verts, null, uvs);
+    const normals = [];
+    ChunkModel.buildMesh(this.chunk, verts, indices, uvs, normals, faces, ao);
+    this.mesh = glUtils.createMeshVAO(this.gl, "ch", indices, verts, normals, uvs);
     this.setPosition(this.chunk.xo, this.chunk.yo, this.chunk.zo);
 
     // Push uv indexes
@@ -35,7 +36,7 @@ class ChunkModel extends Model {
     gl.bindVertexArray(null);
   }
 
-  static buildMesh(chunk, verts, inds, uvs, faces, ao) {
+  static buildMesh(chunk, verts, inds, uvs, normals, faces, ao) {
     const size = chunk.x * chunk.z * chunk.y;
     for (let i = 0; i < size; i++) {
       const idx = chunk.cells[i];
@@ -71,7 +72,7 @@ class ChunkModel extends Model {
         yf = faceUVs[idx - 1][j * 2 + 1];
         if (!chunk.get(x, y, z, j)) {
           // Append face
-          ChunkModel.appendQuad(chunk, j, x, y, z, verts, inds, uvs);
+          ChunkModel.appendQuad(chunk, j, x, y, z, verts, inds, uvs, normals);
           faces.push(xf, yf, xf, yf, xf, yf, xf, yf); // uv indexes
 
           // Experimenting with Ambient Occlusion
@@ -126,7 +127,7 @@ class ChunkModel extends Model {
     }
   }
 
-  static appendQuad(chunk, faceDir, x, y, z, verts, inds, uvs) {
+  static appendQuad(chunk, faceDir, x, y, z, verts, inds, uvs, normals) {
     const face = Chunk.FACES[faceDir];
     const v = face.v;
     const indOffset = verts.length / 3;
@@ -140,6 +141,7 @@ class ChunkModel extends Model {
 
     for (let i = 0; i < 4; i++) {
       verts.push(v[i * 3 + 0] + x, v[i * 3 + 1] + y, v[i * 3 + 2] + z);
+      normals.push(...face.n);
     }
 
     Chunk.UV.forEach(uv => uvs.push(uv));
