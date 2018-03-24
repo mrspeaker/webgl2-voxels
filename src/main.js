@@ -1,6 +1,7 @@
 import GridAxisShader from "../shaders/GridAxisShader.js";
 import SkyboxShader from "../shaders/SkyboxShader.js";
 import VoxelShader from "../shaders/VoxelShader.js";
+import PortalShader from "../shaders/PortalShader.js";
 
 import CameraController from "../controls/CameraController.js";
 import KeyboardControls from "../controls/KeyboardControls.js";
@@ -31,18 +32,19 @@ const controls = {
 const voxelShader = new VoxelShader(gl, camera.projectionMatrix);
 const gridAxis = GridAxis.create(gl);
 const gridShader = new GridAxisShader(gl, camera.projectionMatrix);
+const portalShader = new PortalShader(gl, camera.projectionMatrix);
 const skybox = Cube.create(gl, "Skybox", 300, 300, 300);
 const skyboxShader = new SkyboxShader(gl, camera.projectionMatrix);
 
-const cloud = Cube.create(gl, "cloud", 10, 0.2, 3);
-cloud.setPosition(0, 35, 0);
-
 const world = new World(gl);
 const player = new Player(controls, camera, world);
+player.pos.set(3, 19, 0.3);
 const ray = new Ray(camera);
 const cube = Cube.create(gl);
 cube.setScale(1.01);
 cube.mesh.drawMode = gl.LINES;
+
+const portal = Cube.create(gl, "portal", 3.99, 4.99, 1);
 
 // MAIN
 preload()
@@ -101,6 +103,24 @@ function initialize(res) {
 
   // Set up initial chunks with density 10
   world.gen(10);
+  setPortal();
+}
+
+function setPortal() {
+  const x = 0;
+  const y = 17;
+  const z = 0;
+  portal.setPosition(x + 3, y + 3.5, z + 0.5);
+  let ch;
+  for (let i = 1; i < 6; i++) {
+    world.setCell(x + i, y, z, 4);
+    world.setCell(x + i, y + 6, z, 4);
+  }
+  for (let i = 0; i < 7; i++) {
+    world.setCell(x, y + i, z, 3);
+    ch = world.setCell(x + 5, y + i, z, 3);
+  }
+  ch.rechunk();
 }
 
 function loopy(t, last = t) {
@@ -122,7 +142,8 @@ function loopy(t, last = t) {
   if (controls.keys.isDown(69)) {
     controls.keys[69] = false;
     world.gen();
-    pos.y = 40;
+    setPortal();
+    player.pos.set(3, 19, 0.3);
   }
 
   // Get block player is looking at
@@ -180,11 +201,6 @@ function loopy(t, last = t) {
     !chunk ? "-" : `${chunk.chunk.chX}:${chunk.chunk.chY}:${chunk.chunk.chZ}`
   }<br/>`;
 
-  cloud.transform.position.x -= 0.3 * dt;
-  if (cloud.transform.position.x < - 32) {
-    cloud.transform.position.x += 64;
-  }
-
   // Render
   skyboxShader
     .activate()
@@ -196,7 +212,6 @@ function loopy(t, last = t) {
   gridShader
     .activate()
     .setCamera(camera.view)
-    .renderModel(cloud.preRender())
     .renderModel(gridAxis.preRender());
 
   voxelShader
@@ -208,4 +223,12 @@ function loopy(t, last = t) {
   world.chunks.forEach(cr => {
     voxelShader.renderModel(cr.preRender());
   });
+
+  portalShader
+    .activate()
+    .preRender()
+    .setTime(t)
+    .setCamera(camera.view)
+    .renderModel(portal.preRender())
+    .deactivate();
 }

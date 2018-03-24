@@ -15,6 +15,8 @@ class World {
     this.cx = x;
     this.cy = y;
     this.cz = z;
+    this.chunks.push(new ChunkModel(gl, new Chunk(x, y, z, 0, 1, 0)));
+    this.chIdx.push(`0:1:0`);
   }
 
   update() {}
@@ -55,7 +57,7 @@ class World {
     const { chunks } = this;
     const simplex = new SimplexNoise();
     const density = initDensity || (Math.random() * Math.random() * 40) + 6;
-    chunks.forEach(cr => {
+    chunks.slice(0, -1).forEach(cr => {
       const { chunk } = cr;
       const AIR = 0;
       const TREE = 1;
@@ -139,7 +141,8 @@ class World {
         }
       }
       const cell = this.getCell(x, y, z);
-      if (cell) {
+      // NOTE: the Y check is just to stop building in the top Portal chunk!
+      if (y <= 15 && cell) {
         return { x, y, z, face };
       }
     }
