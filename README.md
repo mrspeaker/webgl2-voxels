@@ -19,3 +19,5 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 * Refactor collisions
 * Fix texture seams
 * move skymap with player
+* fix jumping (double tap to fly)
+* camera clips when jumping and looking up

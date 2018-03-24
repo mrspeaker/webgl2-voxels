@@ -34,6 +34,9 @@ const gridShader = new GridAxisShader(gl, camera.projectionMatrix);
 const skybox = Cube.create(gl, "Skybox", 300, 300, 300);
 const skyboxShader = new SkyboxShader(gl, camera.projectionMatrix);
 
+const cloud = Cube.create(gl, "cloud", 10, 0.2, 3);
+cloud.setPosition(0, 35, 0);
+
 const world = new World(gl);
 const player = new Player(controls, camera, world);
 const ray = new Ray(camera);
@@ -177,6 +180,11 @@ function loopy(t, last = t) {
     !chunk ? "-" : `${chunk.chunk.chX}:${chunk.chunk.chY}:${chunk.chunk.chZ}`
   }<br/>`;
 
+  cloud.transform.position.x -= 0.3 * dt;
+  if (cloud.transform.position.x < - 32) {
+    cloud.transform.position.x += 64;
+  }
+
   // Render
   skyboxShader
     .activate()
@@ -188,6 +196,7 @@ function loopy(t, last = t) {
   gridShader
     .activate()
     .setCamera(camera.view)
+    .renderModel(cloud.preRender())
     .renderModel(gridAxis.preRender());
 
   voxelShader
