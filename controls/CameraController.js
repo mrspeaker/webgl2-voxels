@@ -3,7 +3,7 @@ class CameraController {
     this.canvas = gl.canvas;
     this.camera = camera;
 
-    this.rotateRate = -200;
+    this.rotateRate = -150;
     this.zoomRate = 200;
 
     const box = this.canvas.getBoundingClientRect();
