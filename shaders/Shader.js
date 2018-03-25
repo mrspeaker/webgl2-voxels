@@ -33,29 +33,40 @@ class Shader {
     return this;
   }
 
-  setUniforms(...uniforms) {
-    if (uniforms[0].name == "proj") {
-      this.setPerspective(uniforms[0].value);
-    }
-    // TODO: how to set uniforms?
-    return this;
-  }
-
-  setCamera(m) {
+  setUniforms(...unis) {
     const { gl, uniforms } = this;
-    gl.uniformMatrix4fv(uniforms.camera, false, m);
-    return this;
-  }
 
-  setPerspective(m) {
-    const { gl, uniforms } = this;
-    gl.uniformMatrix4fv(uniforms.proj, false, m);
-    return this;
-  }
-
-  setModel(m) {
-    const { gl, uniforms } = this;
-    gl.uniformMatrix4fv(uniforms.view, false, m);
+    // Uniforms supplied as args: name/value
+    unis.reduce((name, value, i) => {
+      if (i % 2 == 1) {
+        const u = uniforms[name];
+        if (!u) {
+          console.warn("No uniform called", name);
+          return;
+        }
+        // TODO: more types
+        switch (u.type) {
+          case gl.FLOAT_MAT4:
+            gl.uniformMatrix4fv(u.loc, false, value);
+            break;
+          case gl.FLOAT:
+            gl.uniform1f(u.loc, value);
+            break;
+          case gl.SAMPLER_CUBE:
+            gl.uniform1i(u.loc, value);
+            break;
+          case gl.FLOAT_VEC3:
+            gl.uniform3fv(u.loc, value);
+            break;
+          case gl.FLOAT_VEC4:
+            gl.uniform4fv(u.loc, value);
+            break;
+          default:
+            console.warn("don't know gl type", u.type, "for uniform", name);
+        }
+      }
+      return value;
+    });
     return this;
   }
 
@@ -72,22 +83,28 @@ class Shader {
     return this;
   }
 
-  renderModel(model) {
+  render(model) {
     const { gl } = this;
-    const { mesh, transform } = model;
-    this.setModel(transform.view);
 
-    gl.bindVertexArray(mesh.vao);
-    if (mesh.noCulling) gl.disable(gl.CULL_FACE);
-    if (mesh.doBlending) gl.enable(gl.BLEND);
-    if (mesh.indexCount) {
-      gl.drawElements(mesh.drawMode, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
-    } else {
-      gl.drawArrays(mesh.drawMode, 0, mesh.vertCount);
-    }
-    if (mesh.noCulling) gl.enable(gl.CULL_FACE);
-    if (mesh.doBlending) gl.disable(gl.BLEND);
-    gl.bindVertexArray(null);
+    model = !model.length ? [model] : model;
+    model.forEach(m => {
+      const { mesh } = m;
+      m.preRender && m.preRender();
+
+      this.setUniforms("view", m.view);
+
+      gl.bindVertexArray(mesh.vao);
+      if (mesh.noCulling) gl.disable(gl.CULL_FACE);
+      if (mesh.doBlending) gl.enable(gl.BLEND);
+      if (mesh.indexCount) {
+        gl.drawElements(mesh.drawMode, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
+      } else {
+        gl.drawArrays(mesh.drawMode, 0, mesh.vertCount);
+      }
+      if (mesh.noCulling) gl.enable(gl.CULL_FACE);
+      if (mesh.doBlending) gl.disable(gl.BLEND);
+      gl.bindVertexArray(null);
+    });
     return this;
   }
 }

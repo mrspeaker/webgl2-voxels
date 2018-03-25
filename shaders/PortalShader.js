@@ -33,29 +33,20 @@ const fs = `#version 300 es
 class PortalShader extends Shader {
   constructor(gl, pMatrix) {
     super(gl, vs, fs);
-    this.setPerspective(pMatrix);
+    this.setUniforms("proj", pMatrix);
   }
 
   activate() {
     const { gl } = this;
     super.activate();
-
     gl.enable(gl.BLEND);
-    //gl.disable(gl.DEPTH_TEST);
     return this;
   }
 
   deactivate() {
     const { gl } = this;
     gl.disable(gl.BLEND);
-    //gl.enable(gl.DEPTH_TEST);
     return super.deactivate();
-  }
-
-  setTime(t) {
-    const { gl, uniforms } = this;
-    gl.uniform1f(uniforms.t, t / 1000);
-    return this;
   }
 }
 

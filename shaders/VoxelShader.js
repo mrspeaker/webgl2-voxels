@@ -47,37 +47,8 @@ const fss = `#version 300 es
 class VoxelShader extends Shader {
   constructor(gl, pMatrix) {
     super(gl, vss, fss);
-    this.setPerspective(pMatrix);
+    this.setUniforms("proj", pMatrix);
     gl.useProgram(null);
-  }
-
-  renderModel(model) {
-    const { gl } = this;
-    const { mesh, transform } = model;
-    this.setModel(transform.view);
-
-    gl.bindVertexArray(mesh.vao);
-    if (mesh.noCulling) gl.disable(gl.CULL_FACE);
-    if (mesh.doBlending) gl.enable(gl.BLEND);
-    if (mesh.indexCount) {
-      if (mesh.instances) {
-        gl.drawElementsInstanced(
-          mesh.drawMode,
-          mesh.indexCount,
-          gl.UNSIGNED_SHORT,
-          0,
-          mesh.instances
-        );
-      } else {
-        gl.drawElements(mesh.drawMode, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
-      }
-    } else {
-      gl.drawArrays(mesh.drawMode, 0, mesh.vertCount);
-    }
-    if (mesh.noCulling) gl.enable(gl.CULL_FACE);
-    if (mesh.doBlending) gl.disable(gl.BLEND);
-    gl.bindVertexArray(null);
-    return this;
   }
 }
 

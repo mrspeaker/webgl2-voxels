@@ -1,7 +1,7 @@
-import GridAxisShader from "../shaders/GridAxisShader.js";
 import SkyboxShader from "../shaders/SkyboxShader.js";
 import VoxelShader from "../shaders/VoxelShader.js";
 import PortalShader from "../shaders/PortalShader.js";
+import DebugShader from "../shaders/DebugShader.js";
 
 import CameraController from "../controls/CameraController.js";
 import KeyboardControls from "../controls/KeyboardControls.js";
@@ -11,7 +11,6 @@ import Chunk from "./Chunk.js";
 import World from "./World.js";
 import Player from "./Player.js";
 import Cube from "../models/Cube.js";
-import GridAxis from "../models/GridAxis.js";
 import Ray from "../lib/Ray.js";
 import glUtils from "../lib/glUtils.js";
 
@@ -30,21 +29,20 @@ const controls = {
 
 // Shaders
 const voxelShader = new VoxelShader(gl, camera.projectionMatrix);
-const gridAxis = GridAxis.create(gl);
-const gridShader = new GridAxisShader(gl, camera.projectionMatrix);
 const portalShader = new PortalShader(gl, camera.projectionMatrix);
 const skybox = Cube.create(gl, "Skybox", 300, 300, 300);
 const skyboxShader = new SkyboxShader(gl, camera.projectionMatrix);
+const debugShader = new DebugShader(gl, camera.projectionMatrix);
 
 const world = new World(gl);
 const player = new Player(controls, camera, world);
 player.pos.set(3, 19, 0.3);
 const ray = new Ray(camera);
-const cube = Cube.create(gl);
-cube.setScale(1.01);
-cube.mesh.drawMode = gl.LINES;
-
-const portal = Cube.create(gl, "portal", 3.99, 4.99, 1);
+const cursor = Cube.create(gl);
+cursor.scale.set(1.001, 1.001, 1.001);
+//cursor.mesh.drawMode = gl.LINES;
+cursor.mesh.doBlending = true;
+cursor.mesh.noCulling = false;
 
 // MAIN
 preload()
@@ -103,28 +101,9 @@ function initialize(res) {
 
   // Set up initial chunks with density 10
   world.gen(10);
-  setPortal();
 }
 
-function setPortal() {
-  const x = 0;
-  const y = 17;
-  const z = 0;
-  portal.setPosition(x + 3, y + 3.5, z + 0.5);
-  let ch;
-  for (let i = 1; i < 6; i++) {
-    world.setCell(x + i, y, z, 4);
-    world.setCell(x + i, y + 6, z, 4);
-  }
-  for (let i = 0; i < 7; i++) {
-    world.setCell(x, y + i, z, 3);
-    ch = world.setCell(x + 5, y + i, z, 3);
-  }
-  ch.rechunk();
-}
-
-let lastRen = Date.now();
-
+let lastGen = Date.now();
 function loopy(t, last = t) {
   requestAnimationFrame(time => loopy(time, t));
   const dt = Math.min(t - last, 100) / 1000;
@@ -142,12 +121,11 @@ function loopy(t, last = t) {
 
   // E key to gen new chunk
   if (controls.keys.isDown(69)) {
-    if (Date.now() - lastRen > 1000) {
+    if (Date.now() - lastGen > 1000) {
       controls.keys[69] = false;
       player.pos.set(3, 19, 0.3);
       world.gen();
-      lastRen = Date.now();
-      setPortal();
+      lastGen = Date.now();
     }
   }
 
@@ -160,11 +138,10 @@ function loopy(t, last = t) {
   );
   const block = world.getCellFromRay(camera.transform.position, r.ray);
 
-  // NOTE: Y check is just to stop building in Portal chunk!
-  // TODO: also, should be 14 for adding UP!
-  if (block && block.y <= 15) {
-    cube.setPosition(block.x, block.y, block.z);
-    cube.addPosition(0.5, 0.5, 0.5);
+  /* Digging and building */
+  if (block) {
+    cursor.position.set(block.x, block.y, block.z);
+    cursor.position.add(0.5, 0.5, 0.5);
     const isShiftKey = controls.keys.isDown(16);
     const isRightClick = controls.mouse.isRight;
 
@@ -173,8 +150,7 @@ function loopy(t, last = t) {
     const isAddBlock = !isRemoveBlock && !isDestructoMode;
 
     if (isAddBlock) {
-      // TODO: shouldn't be able to add up to above first chunk. (portal)
-      cube.addPosition(...Chunk.FACES[block.face].n);
+      //cursor.position.add(...Chunk.FACES[block.face].n);
     }
     if (controls.mouse.isDown) {
       // Limit to one-action-per-click, except destructo mode
@@ -190,7 +166,8 @@ function loopy(t, last = t) {
       const diggingGround = !isAddBlock && block.y === 0;
 
       if (!diggingGround) {
-        if (!player.testCell(block.x + xo, block.y + yo, block.z + zo)) {
+        // NOTE: Y check is just to stop building in Portal chunk
+        if (block.y + yo <= 15 && !player.testCell(block.x + xo, block.y + yo, block.z + zo)) {
           const ch = world.setCell(
             block.x + xo,
             block.y + yo,
@@ -203,40 +180,32 @@ function loopy(t, last = t) {
     }
   }
 
+  // Render
+  skyboxShader
+    .activate()
+    .preRender("camera", camera.view, "t", t / 80)
+    .render(skybox);
+
+  voxelShader
+    .activate()
+    .preRender("camera", camera.view)
+    .render(world.chunks);
+  //
+  debugShader
+    .activate()
+    .preRender("camera", camera.view)
+    .render(cursor);
+
+  portalShader
+    .activate()
+    .preRender("camera", camera.view, "t", t / 1000)
+    .render(world.portal)
+    .deactivate();
+
+  // Debug
   const chunk = world.getChunk(pos.x, pos.y, pos.z);
   const p = `${pos.x.toFixed(2)}:${pos.y.toFixed(2)}:${pos.z.toFixed(2)}`;
   deb1.innerHTML = `${p}<br/>${
     !chunk ? "-" : `${chunk.chunk.chX}:${chunk.chunk.chY}:${chunk.chunk.chZ}`
   }<br/>`;
-
-  // Render
-  skyboxShader
-    .activate()
-    .setTime(t / 80)
-    .preRender()
-    .setCamera(camera.view)
-    .renderModel(skybox);
-
-  // gridShader
-  //   .activate()
-  //   .setCamera(camera.view)
-  //   .renderModel(gridAxis.preRender());
-
-  voxelShader
-    .activate()
-    .preRender()
-    .setCamera(camera.view)
-    .renderModel(cube.preRender());
-
-  world.chunks.forEach(cr => {
-    voxelShader.renderModel(cr.preRender());
-  });
-
-  portalShader
-    .activate()
-    .preRender()
-    .setTime(t)
-    .setCamera(camera.view)
-    .renderModel(portal.preRender())
-    .deactivate();
 }

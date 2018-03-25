@@ -34,7 +34,7 @@ const fss = `#version 300 es
 class DefaultShader extends Shader {
   constructor(gl, pMatrix) {
     super(gl, vss, fss);
-    this.setPerspective(pMatrix);
+    this.setUniforms("proj", pMatrix);
     gl.useProgram(null);
   }
 
@@ -43,17 +43,13 @@ class DefaultShader extends Shader {
     return this;
   }
 
-  setTime(t) {
-    const { uniforms, gl } = this;
-    gl.uniform1f(uniforms.t, t);
-    return this;
-  }
-
-  preRender() {
+  preRender(...unis) {
     const { gl, skyTex, uniforms } = this;
+    super.preRender(...unis);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyTex);
-    gl.uniform1i(uniforms.sky, 0);
+    this.setUniforms("sky", 0);
+    gl.uniform1i(uniforms.sky.loc, 0);
     return this;
   }
 }

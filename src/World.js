@@ -1,4 +1,6 @@
 import ChunkModel from "../models/ChunkModel.js";
+import Cube from "../models/Cube.js";
+
 import Chunk from "./Chunk.js";
 
 import SimplexNoise from "../vendor/simplex-noise.js";
@@ -20,6 +22,8 @@ class World {
     this.cx = x;
     this.cy = y;
     this.cz = z;
+
+    this.portal = Cube.create(gl, "portal", 3.99, 4.99, 1);
   }
 
   update() {}
@@ -83,6 +87,7 @@ class World {
       });
       cr.rechunk();
     });
+    this.setPortal();
   }
 
   // Traverse world down ray until hit a cell.
@@ -149,6 +154,24 @@ class World {
       }
     }
     return null;
+  }
+
+  setPortal() {
+    const { portal } = this;
+    const x = 0;
+    const y = 17;
+    const z = 0;
+    portal.position.set(x + 3, y + 3.5, z + 0.5);
+    let ch;
+    for (let i = 1; i < 6; i++) {
+      this.setCell(x + i, y, z, 4);
+      this.setCell(x + i, y + 6, z, 4);
+    }
+    for (let i = 0; i < 7; i++) {
+      this.setCell(x, y + i, z, 3);
+      ch = this.setCell(x + 5, y + i, z, 3);
+    }
+    ch.rechunk();
   }
 }
 

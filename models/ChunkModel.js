@@ -20,7 +20,7 @@ class ChunkModel extends Model {
     const normals = [];
     ChunkModel.buildMesh(this.chunk, verts, indices, uvs, normals, faces, ao);
     this.mesh = glUtils.createMeshVAO(this.gl, "ch", indices, verts, normals, uvs);
-    this.setPosition(this.chunk.xo, this.chunk.yo, this.chunk.zo);
+    this.position.set(this.chunk.xo, this.chunk.yo, this.chunk.zo);
 
     // Push uv indexes
     gl.bindVertexArray(this.mesh.vao);
