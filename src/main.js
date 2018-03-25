@@ -161,7 +161,7 @@ function loopy(t, last = t) {
   const block = world.getCellFromRay(camera.transform.position, r.ray);
 
   // NOTE: Y check is just to stop building in Portal chunk!
-  // TODO: should be 14 for adding UP!
+  // TODO: also, should be 14 for adding UP!
   if (block && block.y <= 15) {
     cube.setPosition(block.x, block.y, block.z);
     cube.addPosition(0.5, 0.5, 0.5);
@@ -173,7 +173,7 @@ function loopy(t, last = t) {
     const isAddBlock = !isRemoveBlock && !isDestructoMode;
 
     if (isAddBlock) {
-      // TODO: shouldn't be able to add up to above first chunk.
+      // TODO: shouldn't be able to add up to above first chunk. (portal)
       cube.addPosition(...Chunk.FACES[block.face].n);
     }
     if (controls.mouse.isDown) {

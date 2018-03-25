@@ -12,11 +12,14 @@ class World {
     );
     // TODO: fix chunk id-ing.
     this.chIdx = spiral.map(([x, y]) => `${x}:0:${y}`);
+
+    // Extra chunk for portal
+    this.chunks.push(new ChunkModel(gl, new Chunk(x, y, z, 0, 1, 0)));
+    this.chIdx.push("0:1:0");
+
     this.cx = x;
     this.cy = y;
     this.cz = z;
-    this.chunks.push(new ChunkModel(gl, new Chunk(x, y, z, 0, 1, 0)));
-    this.chIdx.push(`0:1:0`);
   }
 
   update() {}

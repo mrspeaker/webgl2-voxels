@@ -20,10 +20,13 @@ const fs = `#version 300 es
   in vec3 vpos;
   out vec4 col;
   void main() {
-    float r = cos(t + vpos.x * vpos.y * 2.9) / 1.5;
-    float g = sin(t + vpos.y * vpos.x * 3.0) / 5.0;
+    float w = sin((vpos.x * 35.) * .15);
+    float w2 = sin((vpos.y * 35.) * .15 + t / 0.5);
+    float r = abs(cos(t / 3.0 + vpos.x * vpos.y * 1.9 + w2)) / 1.8;
+    float g = sin(t / 2.0 + vpos.y * vpos.x * 2.0) / 5.;
     float b = 0.0;
-    col = vec4(r, g, b, 0.7);
+    vec3 c = vec3(1.0 + (w + w2) / 5.);
+    col = vec4(c* vec3(r, g, b), 0.7);
   }
 `;
 
