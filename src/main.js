@@ -217,10 +217,10 @@ function loopy(t, last = t) {
     .setCamera(camera.view)
     .renderModel(skybox);
 
-  gridShader
-    .activate()
-    .setCamera(camera.view)
-    .renderModel(gridAxis.preRender());
+  // gridShader
+  //   .activate()
+  //   .setCamera(camera.view)
+  //   .renderModel(gridAxis.preRender());
 
   voxelShader
     .activate()
