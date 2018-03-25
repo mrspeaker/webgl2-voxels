@@ -123,6 +123,8 @@ function setPortal() {
   ch.rechunk();
 }
 
+let lastRen = Date.now();
+
 function loopy(t, last = t) {
   requestAnimationFrame(time => loopy(time, t));
   const dt = Math.min(t - last, 100) / 1000;
@@ -140,10 +142,13 @@ function loopy(t, last = t) {
 
   // E key to gen new chunk
   if (controls.keys.isDown(69)) {
-    controls.keys[69] = false;
-    player.pos.set(3, 19, 0.3);
-    world.gen();
-    setPortal();
+    if (Date.now() - lastRen > 1000) {
+      controls.keys[69] = false;
+      player.pos.set(3, 19, 0.3);
+      world.gen();
+      lastRen = Date.now();
+      setPortal();
+    }
   }
 
   // Get block player is looking at

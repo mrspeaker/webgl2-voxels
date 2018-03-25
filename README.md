@@ -21,3 +21,5 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 * move skymap with player
 * fix jumping (double tap to fly)
 * camera clips when jumping and looking up
+* shouldn't be able to build UP to portal level Y = 16.
+* sit in portal == new world
