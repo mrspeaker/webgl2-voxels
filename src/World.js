@@ -141,8 +141,7 @@ class World {
         }
       }
       const cell = this.getCell(x, y, z);
-      // NOTE: the Y check is just to stop building in the top Portal chunk!
-      if (y <= 15 && cell) {
+      if (cell) {
         return { x, y, z, face };
       }
     }

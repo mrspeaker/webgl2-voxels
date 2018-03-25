@@ -141,9 +141,9 @@ function loopy(t, last = t) {
   // E key to gen new chunk
   if (controls.keys.isDown(69)) {
     controls.keys[69] = false;
+    player.pos.set(3, 19, 0.3);
     world.gen();
     setPortal();
-    player.pos.set(3, 19, 0.3);
   }
 
   // Get block player is looking at
@@ -155,7 +155,9 @@ function loopy(t, last = t) {
   );
   const block = world.getCellFromRay(camera.transform.position, r.ray);
 
-  if (block) {
+  // NOTE: Y check is just to stop building in Portal chunk!
+  // TODO: should be 14 for adding UP!
+  if (block && block.y <= 15) {
     cube.setPosition(block.x, block.y, block.z);
     cube.addPosition(0.5, 0.5, 0.5);
     const isShiftKey = controls.keys.isDown(16);
@@ -166,6 +168,7 @@ function loopy(t, last = t) {
     const isAddBlock = !isRemoveBlock && !isDestructoMode;
 
     if (isAddBlock) {
+      // TODO: shouldn't be able to add up to above first chunk.
       cube.addPosition(...Chunk.FACES[block.face].n);
     }
     if (controls.mouse.isDown) {
