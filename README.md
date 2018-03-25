@@ -8,7 +8,7 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 
 * WASD move (or ZQSD for france)
 * SPACE jump (hold to "fly")
-* E create new world
+* E create new world (or sit in portal!)
 * Left click: add block
 * Shift click: delete block
 * Right click: destructo mode!
@@ -21,4 +21,3 @@ Experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.
 * move skymap with player
 * fix jumping (double tap to fly)
 * camera clips when jumping and looking up
-* sit in portal == new world

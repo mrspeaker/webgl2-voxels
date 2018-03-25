@@ -13,6 +13,7 @@ import Player from "./Player.js";
 import Cube from "../models/Cube.js";
 import Ray from "../lib/Ray.js";
 import glUtils from "../lib/glUtils.js";
+import Vec3 from "../lib/Vec3.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");
 glUtils.fitScreen(gl);
@@ -104,6 +105,9 @@ function initialize(res) {
 }
 
 let lastGen = Date.now();
+let timeInPortal = 0;
+let leftPortal = false;
+
 function loopy(t, last = t) {
   requestAnimationFrame(time => loopy(time, t));
   const dt = Math.min(t - last, 100) / 1000;
@@ -122,7 +126,7 @@ function loopy(t, last = t) {
   // E key to gen new chunk
   if (controls.keys.isDown(69)) {
     if (Date.now() - lastGen > 1000) {
-      controls.keys[69] = false;
+      controls.keys.keys[69] = false;
       player.pos.set(3, 19, 0.3);
       world.gen();
       lastGen = Date.now();
@@ -167,7 +171,10 @@ function loopy(t, last = t) {
 
       if (!diggingGround) {
         // NOTE: Y check is just to stop building in Portal chunk
-        if (block.y + yo <= 15 && !player.testCell(block.x + xo, block.y + yo, block.z + zo)) {
+        if (
+          block.y + yo <= 15 &&
+          !player.testCell(block.x + xo, block.y + yo, block.z + zo)
+        ) {
           const ch = world.setCell(
             block.x + xo,
             block.y + yo,
@@ -177,6 +184,27 @@ function loopy(t, last = t) {
           if (ch) ch.rechunk();
         }
       }
+    }
+  }
+
+  // Magic portal
+  const distToPortal = Vec3.from(player.pos)
+    .scale(-1)
+    .addv(world.portal.position)
+    .lengthSq();
+
+  if (!leftPortal) {
+    if (distToPortal > 6) {
+      leftPortal = true;
+    }
+  } else {
+    if (distToPortal < 6) timeInPortal += dt;
+    else timeInPortal = 0;
+
+    if (timeInPortal > 2) {
+      controls.keys.keys[69] = true; // lol, clicked E! Regen chunk!
+      timeInPortal = 0;
+      leftPortal = false;
     }
   }
 
