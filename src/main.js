@@ -130,6 +130,7 @@ function loopy(t, last = t) {
       player.pos.set(3, 19, 0.3);
       world.gen();
       lastGen = Date.now();
+      leftPortal = false;
     }
   }
 
@@ -196,9 +197,11 @@ function loopy(t, last = t) {
   if (!leftPortal) {
     if (distToPortal > 6) {
       leftPortal = true;
+      timeInPortal = 0;
     }
   } else {
-    if (distToPortal < 6) timeInPortal += dt;
+    if (distToPortal < 6) {
+      timeInPortal += dt;}
     else timeInPortal = 0;
 
     if (timeInPortal > 2) {
