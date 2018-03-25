@@ -229,7 +229,7 @@ function loopy(t, last = t) {
 
   portalShader
     .activate()
-    .preRender("camera", camera.view, "t", t / 1000)
+    .preRender("camera", camera.view, "t", t / 1000, "whirl", timeInPortal / 2)
     .render(world.portal)
     .deactivate();
 
