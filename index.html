@@ -102,10 +102,11 @@
 
     <script nomodule>
       document.querySelector("#nomodule").style.display = "block";
-      window.gtag && window.gtag("event", {
+      window.gtag && window.gtag("event", "Browser" {
         event_category: "Browser",
         event_action: "support",
-        event_label: "no-module"
+        event_label: "no-module",
+        non_interaction: true
       });
     </script>
   </body>
