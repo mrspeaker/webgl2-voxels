@@ -28,8 +28,7 @@ const digAndBuild = (block, controls, world, player, blockType = 3) => {
     return;
   }
 
-  const ch = world.setCell(x, y, z, isAdd ? blockType : 0);
-  if (ch) ch.rechunk();
+  world.setCell(x, y, z, isAdd ? blockType : 0);
 };
 
 export default digAndBuild;

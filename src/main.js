@@ -166,7 +166,7 @@ function loopy(t, last = t, state) {
     .activate()
     .preRender("camera", camera.view)
     .render(world.chunks);
-  //
+
   debugShader
     .activate()
     .preRender("camera", camera.view)

@@ -10,12 +10,14 @@ class Chunk {
     this.yo = yo * y;
     this.zo = zo * z;
     this.cells = [...Array(x * z * y)].fill(0);
+    this.isDirty = false;
   }
   getIdx(x, y, z) {
     return x + z * this.x + y * this.x * this.z;
   }
   set(x, y, z, v) {
     this.cells[this.getIdx(x, y, z)] = v;
+    this.isDirty = true;
   }
   get(x, y, z, dir = -1) {
     if (dir != -1) {

@@ -7,20 +7,19 @@ class ChunkModel extends Model {
     super();
     this.gl = gl;
     this.chunk = chunk;
-    this.rechunk();
   }
 
   rechunk() {
-    const { gl } = this;
+    const { gl, chunk } = this;
     const verts = [];
     const indices = [];
     const uvs = [];
     const faces = [];
     const ao = [];
     const normals = [];
-    ChunkModel.buildMesh(this.chunk, verts, indices, uvs, normals, faces, ao);
-    this.mesh = glUtils.createMeshVAO(this.gl, "ch", indices, verts, normals, uvs);
-    this.position.set(this.chunk.xo, this.chunk.yo, this.chunk.zo);
+    ChunkModel.buildMesh(chunk, verts, indices, uvs, normals, faces, ao);
+    this.mesh = glUtils.createMeshVAO(gl, "ch", indices, verts, normals, uvs);
+    this.position.set(chunk.xo, chunk.yo, chunk.zo);
 
     // Push uv indexes
     gl.bindVertexArray(this.mesh.vao);
@@ -34,6 +33,8 @@ class ChunkModel extends Model {
     gl.enableVertexAttribArray(4);
     gl.vertexAttribPointer(4, 1, gl.FLOAT, false, 0, 0);
     gl.bindVertexArray(null);
+
+    chunk.isDirty = false;
   }
 
   static buildMesh(chunk, verts, inds, uvs, normals, faces, ao) {

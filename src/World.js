@@ -31,7 +31,13 @@ class World {
     };
   }
 
-  update() {}
+  update() {
+    this.chunks.forEach(c => {
+      if (c.chunk.isDirty) {
+        c.rechunk();
+      }
+    });
+  }
 
   getChunk(x, y, z) {
     const { chIdx, chunks, cx, cy, cz } = this;
@@ -69,6 +75,7 @@ class World {
     const { chunks } = this;
     const simplex = new SimplexNoise();
     const density = initDensity || Math.random() * Math.random() * 40 + 6;
+    // Slice out portal chunk!
     chunks.slice(0, -1).forEach(cr => {
       const { chunk } = cr;
       const AIR = 0;
@@ -92,6 +99,7 @@ class World {
       });
       cr.rechunk();
     });
+    
     this.setPortal();
   }
 
@@ -172,16 +180,14 @@ class World {
     portal.leftPortal = false;
     renderable.position.set(x + 3, y + 3.5, z + 0.5);
 
-    let ch;
     for (let i = 1; i < 6; i++) {
       this.setCell(x + i, y, z, 4);
       this.setCell(x + i, y + 6, z, 4);
     }
     for (let i = 0; i < 7; i++) {
       this.setCell(x, y + i, z, 3);
-      ch = this.setCell(x + 5, y + i, z, 3);
+      this.setCell(x + 5, y + i, z, 3);
     }
-    ch.rechunk();
   }
 
   didTriggerPortal(pos, dt) {
