@@ -1,5 +1,4 @@
 const ping = (cat, act = "") => {
-  console.log("seind", cat, act);
   if (!window.ga) return;
   window.ga("send", {
     hitType: "event",
