@@ -45,10 +45,8 @@ class ChunkModel extends Model {
       const x = i % chunk.x;
       const z = ((i / chunk.x) | 0) % chunk.z;
       const y = (i / (chunk.x * chunk.z)) | 0;
-      // Check each face direction
-      let xf;
-      let yf;
-      const faceUVs = [
+
+      const blockUVs = [
         [4, 1, 4, 1, 4, 1, 4, 1, 5, 1, 5, 1],
         [3, 0, 3, 0, 3, 0, 3, 0, 0, 0, 2, 0],
         [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
@@ -69,9 +67,12 @@ class ChunkModel extends Model {
         return debug ? vo : vo * 0.5 + 0.5;
       };
 
+      // Check each face direction
+      let xf;
+      let yf;
       for (let j = 0; j < Chunk.FACES.length; j++) {
-        xf = faceUVs[idx - 1][j * 2];
-        yf = faceUVs[idx - 1][j * 2 + 1];
+        xf = blockUVs[idx - 1][j * 2];
+        yf = blockUVs[idx - 1][j * 2 + 1];
         if (!chunk.get(x, y, z, j)) {
           // Append face
           ChunkModel.appendQuad(chunk, j, x, y, z, verts, inds, uvs, normals);
@@ -79,7 +80,7 @@ class ChunkModel extends Model {
 
           // Experimenting with Ambient Occlusion
           // Get the "side" and "corner" blocks for each vertex.
-          // TODO: Should be able to do this with an algo...
+          // TODO: Should be able to do this with an algo (with normals)
           for (let k = 0; k < 4; k++) {
             if (j === Chunk.UP) {
               ao.push(addAO(...[

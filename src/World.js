@@ -29,6 +29,12 @@ class World {
       timeInPortal: 0,
       leftPortal: false
     };
+
+    this.ad = {
+      visible: false,
+      renderable: Cube.create(gl)
+    };
+    this.ad.renderable.scale.set(0.75, 0.75, 0.75);
   }
 
   update() {
@@ -99,8 +105,9 @@ class World {
       });
       cr.rechunk();
     });
-    
+
     this.setPortal();
+    this.setAd();
   }
 
   // Traverse world down ray until hit a cell.
@@ -212,6 +219,44 @@ class World {
     }
 
     return false;
+  }
+
+  didTriggerAd(pos) {
+    const { ad } = this;
+    const distToAd = Vec3.from(pos)
+      .scale(-1)
+      .addv(ad.renderable.position)
+      .lengthSq();
+    return distToAd < 10;
+  }
+
+  setAd() {
+    const { ad } = this;
+    let found = false;
+    let max = 20;
+    let x;
+    let z;
+    while (!found && max-- > 0) {
+      x = Math.floor(Math.random() * 60 - 30);
+      z = Math.floor(Math.random() * 60 - 30);
+      let hit = false;
+      for (let yo = 1; yo < 4; yo++) {
+        for (let zo = -1; zo < 2; zo++) {
+          for (let xo = -1; xo < 2; xo++) {
+            if (hit) break;
+            const c = this.getCell(x + xo, yo, z + zo);
+            if (c) {
+              hit = true;
+              break;
+            }
+          }
+        }
+      }
+      if (!hit) {
+        found = true;
+      }
+    }
+    ad.renderable.position.set(x, 2.5, z);
   }
 }
 

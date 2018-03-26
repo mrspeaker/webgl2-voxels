@@ -20,6 +20,7 @@ glUtils.fitScreen(gl);
 gl.canvas.onclick = () => gl.canvas.requestPointerLock();
 window.addEventListener("resize", () => glUtils.fitScreen(gl), false);
 const deb1 = document.querySelector("#deb1");
+const ad1 = document.querySelector("#ad");
 
 const camera = new Camera(gl);
 camera.mode = Camera.MODE_FREE;
@@ -70,7 +71,8 @@ function preload() {
       { name: "cube2", src: "res/mc_up.png", type: "img" },
       { name: "cube3", src: "res/mc_dn.png", type: "img" },
       { name: "cube4", src: "res/mc_bk.png", type: "img" },
-      { name: "cube5", src: "res/mc_ft.png", type: "img" }
+      { name: "cube5", src: "res/mc_ft.png", type: "img" },
+      { name: "ad", src: "res/html5games.png", type: "tex" }
     ].map(
       ({ name, src, type }) =>
         new Promise(res => {
@@ -96,6 +98,7 @@ function initialize(res) {
   glUtils.loadCubeMap(gl, "skybox", cubeImg);
   skyboxShader.setCube(glUtils.textures.skybox);
   voxelShader.setTexture(glUtils.textures.blocks);
+  debugShader.setTexture(glUtils.textures.ad);
 
   // Initialize webgl
   gl.clearColor(1, 1, 1, 1.0);
@@ -137,6 +140,10 @@ function loopy(t, last = t, state) {
     }
   }
 
+  if (controls.keys.isDown(66)) {
+    window.location.href = "http://www.mrspeaker.net/html5-games-book/";
+  }
+
   // Get block player is looking at
   const r = ray.fromScreen(
     gl.canvas.width / 2,
@@ -156,6 +163,12 @@ function loopy(t, last = t, state) {
     regenWorld();
   }
 
+  if (world.didTriggerAd(player.pos)) {
+    ad1.style.display = "block";
+  } else {
+    ad1.style.display = "none";
+  }
+
   // Render
   skyboxShader
     .activate()
@@ -169,8 +182,15 @@ function loopy(t, last = t, state) {
 
   debugShader
     .activate()
-    .preRender("camera", camera.view)
-    .render(cursor);
+    .preRender("camera", camera.view, "colour", [1.0, 1.0, 0.0, 0.1], "useTex", 0.0)
+    .render(cursor)
+    .setUniforms("colour", [1, 1, 1, 0.1], "tex", 0, "useTex", 1.0)
+    .render(world.ad.renderable);
+
+  world.ad.renderable.rotation.x += dt * 30.0;
+  world.ad.renderable.rotation.y += dt * 27.0;
+  world.ad.renderable.rotation.z += dt * 21.0;
+  world.ad.renderable.position.y += Math.sin(t / 300) * 0.01;
 
   portalShader
     .activate()

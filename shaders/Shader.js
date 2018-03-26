@@ -41,7 +41,7 @@ class Shader {
       if (i % 2 == 1) {
         const u = uniforms[name];
         if (!u) {
-          console.warn("No uniform called", name);
+        //  console.warn("No uniform called", name);
           return;
         }
         // TODO: more types
@@ -53,6 +53,7 @@ class Shader {
             gl.uniform1f(u.loc, value);
             break;
           case gl.SAMPLER_CUBE:
+          case gl.SAMPLER_2D:
             gl.uniform1i(u.loc, value);
             break;
           case gl.FLOAT_VEC3:

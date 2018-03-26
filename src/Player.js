@@ -75,9 +75,6 @@ class Player {
     vel.y -= dt * 0.75; // gravity;
     yo = vel.y;
 
-    // Check 12 points xo, yo (top, mid, bottom), zo against world.
-    // TODO: this is super in-efficient! Fix it!
-
     /*
       Collisions with voxels is the same as "wallsliding collision detction"
       from 2D games. Because it's a regular grid, it works the same way - only
