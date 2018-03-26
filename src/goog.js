@@ -1,20 +1,21 @@
-const ping = (cat, act = "") => {
+const ping = (cat, act, label) => {
   if (!window.ga) return;
   window.ga("send", {
     hitType: "event",
     eventCategory: cat,
-    eventAction: act
+    eventAction: act,
+    eventLabel: label
   });
 };
 
 export default {
   lookBook() {
-    ping("Ad", "looky-booky");
+    ping("Ad", "book", "looky-booky");
   },
   newWorld() {
-    ping("Game", "new-world");
+    ping("Game", "world", "new-world");
   },
   noWebGL2() {
-    ping("Browser", "no-webgl2");
+    ping("Browser", "support", "no-webgl2");
   }
 };
