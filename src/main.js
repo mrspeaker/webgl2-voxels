@@ -14,8 +14,12 @@ import Ray from "../lib/Ray.js";
 import glUtils from "../lib/glUtils.js";
 
 import digAndBuild from "./digAndBuild.js";
+import goog from "./goog.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");
+if (!gl) {
+  goog.noWebGL2();
+}
 glUtils.fitScreen(gl);
 gl.canvas.onclick = () => gl.canvas.requestPointerLock();
 window.addEventListener("resize", () => glUtils.fitScreen(gl), false);
@@ -137,11 +141,14 @@ function loopy(t, last = t, state) {
   if (controls.keys.isDown(69)) {
     if (Date.now() - state.lastGen > 1000) {
       regenWorld();
+      goog.newWorld();
     }
   }
 
   if (controls.keys.isDown(66)) {
+    controls.keys.keys[66] = false;
     window.location.href = "http://www.mrspeaker.net/html5-games-book/";
+    goog.lookBook();
   }
 
   // Get block player is looking at

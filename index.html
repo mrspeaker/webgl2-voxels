@@ -89,17 +89,24 @@
       doesn't support yet. Sorry! Have a look at the code if you're that way inclined. WegGL2 is
       pretty fun.
     </p>
-    <script nomodule>
-      document.querySelector("#nomodule").style.display = "block";
-    </script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97947162-2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-97947162-2');
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "UA-97947162-2");
     </script>
 
+    <script nomodule>
+      document.querySelector("#nomodule").style.display = "block";
+      window.ga && window.ga("send", {
+        hitType: "event",
+        eventCategory: "Browser",
+        eventAction: "no-module"
+      });
+    </script>
   </body>
 </html>
