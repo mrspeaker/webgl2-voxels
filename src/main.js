@@ -7,13 +7,13 @@ import CameraController from "../controls/CameraController.js";
 import KeyboardControls from "../controls/KeyboardControls.js";
 
 import Camera from "./Camera.js";
-import Chunk from "./Chunk.js";
 import World from "./World.js";
 import Player from "./Player.js";
 import Cube from "../models/Cube.js";
 import Ray from "../lib/Ray.js";
 import glUtils from "../lib/glUtils.js";
-import Vec3 from "../lib/Vec3.js";
+
+import digAndBuild from "./digAndBuild.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");
 glUtils.fitScreen(gl);
@@ -45,10 +45,14 @@ cursor.scale.set(1.001, 1.001, 1.001);
 cursor.mesh.doBlending = true;
 cursor.mesh.noCulling = false;
 
+const state = {
+  lastGen: Date.now()
+};
+
 // MAIN
 preload()
   .then(initialize)
-  .then(() => requestAnimationFrame(loopy));
+  .then(() => requestAnimationFrame(t => loopy(t, t, state)));
 
 function preload() {
   const loadImg = src =>
@@ -104,12 +108,8 @@ function initialize(res) {
   world.gen(10);
 }
 
-let lastGen = Date.now();
-let timeInPortal = 0;
-let leftPortal = false;
-
-function loopy(t, last = t) {
-  requestAnimationFrame(time => loopy(time, t));
+function loopy(t, last = t, state) {
+  requestAnimationFrame(time => loopy(time, t, state));
   const dt = Math.min(t - last, 100) / 1000;
 
   player.update(dt);
@@ -123,14 +123,17 @@ function loopy(t, last = t) {
   camera.transform.position.setv(pos).add(0, player.h / 2, 0);
   camera.updateViewMatrix();
 
+  const regenWorld = () => {
+    controls.keys.keys[69] = false;
+    player.pos.set(3, 19, 0.3);
+    world.gen();
+    state.lastGen = Date.now();
+  };
+
   // E key to gen new chunk
   if (controls.keys.isDown(69)) {
-    if (Date.now() - lastGen > 1000) {
-      controls.keys.keys[69] = false;
-      player.pos.set(3, 19, 0.3);
-      world.gen();
-      lastGen = Date.now();
-      leftPortal = false;
+    if (Date.now() - state.lastGen > 1000) {
+      regenWorld();
     }
   }
 
@@ -141,74 +144,16 @@ function loopy(t, last = t) {
     gl.canvas.width,
     gl.canvas.height
   );
-  const block = world.getCellFromRay(camera.transform.position, r.ray);
 
-  /* Digging and building */
+  const block = world.getCellFromRay(camera.transform.position, r.ray);
   if (block) {
+    digAndBuild(block, controls, world, player);
     cursor.position.set(block.x, block.y, block.z);
     cursor.position.add(0.5, 0.5, 0.5);
-    const isShiftKey = controls.keys.isDown(16);
-    const isRightClick = controls.mouse.isRight;
-
-    const isRemoveBlock = isShiftKey;
-    const isDestructoMode = !isShiftKey && isRightClick;
-    const isAddBlock = !isRemoveBlock && !isDestructoMode;
-
-    if (isAddBlock) {
-      //cursor.position.add(...Chunk.FACES[block.face].n);
-    }
-    if (controls.mouse.isDown) {
-      // Limit to one-action-per-click, except destructo mode
-      if (!isDestructoMode) {
-        controls.mouse.isDown = false;
-      }
-
-      // Add or remove block
-      const n = Chunk.FACES[block.face].n;
-      const xo = isAddBlock ? n[0] : 0;
-      const yo = isAddBlock ? n[1] : 0;
-      const zo = isAddBlock ? n[2] : 0;
-      const diggingGround = !isAddBlock && block.y === 0;
-
-      if (!diggingGround) {
-        // NOTE: Y check is just to stop building in Portal chunk
-        if (
-          block.y + yo <= 15 &&
-          !player.testCell(block.x + xo, block.y + yo, block.z + zo)
-        ) {
-          const ch = world.setCell(
-            block.x + xo,
-            block.y + yo,
-            block.z + zo,
-            isAddBlock ? 3 : 0
-          );
-          if (ch) ch.rechunk();
-        }
-      }
-    }
   }
 
-  // Magic portal
-  const distToPortal = Vec3.from(player.pos)
-    .scale(-1)
-    .addv(world.portal.position)
-    .lengthSq();
-
-  if (!leftPortal) {
-    if (distToPortal > 6) {
-      leftPortal = true;
-      timeInPortal = 0;
-    }
-  } else {
-    if (distToPortal < 6) {
-      timeInPortal += dt;}
-    else timeInPortal = 0;
-
-    if (timeInPortal > 2) {
-      controls.keys.keys[69] = true; // lol, clicked E! Regen chunk!
-      timeInPortal = 0;
-      leftPortal = false;
-    }
+  if (world.didTriggerPortal(player.pos, dt)) {
+    regenWorld();
   }
 
   // Render
@@ -229,8 +174,15 @@ function loopy(t, last = t) {
 
   portalShader
     .activate()
-    .preRender("camera", camera.view, "t", t / 1000, "whirl", timeInPortal / 2)
-    .render(world.portal)
+    .preRender(
+      "camera",
+      camera.view,
+      "t",
+      t / 1000,
+      "whirl",
+      world.portal.timeInPortal / 2
+    )
+    .render(world.portal.renderable)
     .deactivate();
 
   // Debug

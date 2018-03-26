@@ -5,6 +5,7 @@ import Chunk from "./Chunk.js";
 
 import SimplexNoise from "../vendor/simplex-noise.js";
 import spiral2D from "../lib/spiral2D.js";
+import Vec3 from "../lib/Vec3.js";
 
 class World {
   constructor(gl, x = 16, y = 16, z = 16) {
@@ -23,7 +24,11 @@ class World {
     this.cy = y;
     this.cz = z;
 
-    this.portal = Cube.create(gl, "portal", 3.99, 4.99, 1);
+    this.portal = {
+      renderable: Cube.create(gl, "portal", 3.99, 4.99, 1),
+      timeInPortal: 0,
+      leftPortal: false
+    };
   }
 
   update() {}
@@ -63,7 +68,7 @@ class World {
   gen(initDensity) {
     const { chunks } = this;
     const simplex = new SimplexNoise();
-    const density = initDensity || (Math.random() * Math.random() * 40) + 6;
+    const density = initDensity || Math.random() * Math.random() * 40 + 6;
     chunks.slice(0, -1).forEach(cr => {
       const { chunk } = cr;
       const AIR = 0;
@@ -158,10 +163,15 @@ class World {
 
   setPortal() {
     const { portal } = this;
+    const { renderable } = portal;
     const x = 0;
     const y = 17;
     const z = 0;
-    portal.position.set(x + 3, y + 3.5, z + 0.5);
+
+    portal.timeInPortal = 0;
+    portal.leftPortal = false;
+    renderable.position.set(x + 3, y + 3.5, z + 0.5);
+
     let ch;
     for (let i = 1; i < 6; i++) {
       this.setCell(x + i, y, z, 4);
@@ -172,6 +182,30 @@ class World {
       ch = this.setCell(x + 5, y + i, z, 3);
     }
     ch.rechunk();
+  }
+
+  didTriggerPortal(pos, dt) {
+    const { portal } = this;
+    const { leftPortal, timeInPortal } = portal;
+    const distToPortal = Vec3.from(pos)
+      .scale(-1)
+      .addv(portal.renderable.position)
+      .lengthSq();
+
+    if (distToPortal <= 6) {
+      portal.timeInPortal = leftPortal ? timeInPortal + dt : 0;
+    } else if (!leftPortal) {
+      portal.leftPortal = true;
+      portal.timeInPortal = 0;
+    }
+
+    if (portal.timeInPortal > 2) {
+      portal.timeInPortal = 0;
+      portal.leftPortal = false;
+      return true;
+    }
+
+    return false;
   }
 }
 
