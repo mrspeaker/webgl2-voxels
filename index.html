@@ -53,6 +53,9 @@
         right: 20px;
         height: 200;
       }
+      #nomodule {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -81,5 +84,13 @@
         Go on, just for a minute!
       </p>
     </noscript>
+    <p id="nomodule" class="anotherVisitor">Welcome! This is WebGL2 experiment - the classic minecraft world.
+      But it's using JavaScript Native Modules that it seems like your browser
+      doesn't support yet. Sorry! Have a look at the code if you're that way inclined. WegGL2 is
+      pretty fun.
+    </p>
+    <script nomodule>
+      document.querySelector("#nomodule").style.display = "block";
+    </script>
   </body>
 </html>
