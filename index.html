@@ -41,7 +41,6 @@
         bottom: 0;
       }
       #ad {
-        display: none;
         background-color: rgba(0, 0, 0, 0.4);
         padding: 1em;
         border-radius: 10px;
@@ -53,7 +52,7 @@
         right: 20px;
         height: 200;
       }
-      #nomodule {
+      #ad, #nowebgl2, #nomodule {
         display: none;
       }
     </style>
@@ -84,6 +83,11 @@
         Go on, just for a minute!
       </p>
     </noscript>
+    <p id="nowebgl2" class="anotherVisitor">Welcome! This is WebGL2 experiment - the classic minecraft world.
+      But it's using JavaScript Native Modules and WebGL2 that it seems like your browser
+      doesn't support yet. Sorry! Have a look at the code if you're that way inclined. WegGL2 is
+      pretty fun.
+    </p>
     <p id="nomodule" class="anotherVisitor">Welcome! This is WebGL2 experiment - the classic minecraft world.
       But it's using JavaScript Native Modules that it seems like your browser
       doesn't support yet. Sorry! Have a look at the code if you're that way inclined. WegGL2 is

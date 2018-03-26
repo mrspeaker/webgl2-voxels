@@ -18,6 +18,7 @@ import goog from "./goog.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");
 if (!gl) {
+  document.querySelector("#nowebgl2").style.display = "block";
   goog.noWebGL2();
 }
 glUtils.fitScreen(gl);
