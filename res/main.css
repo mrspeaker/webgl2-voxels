@@ -34,6 +34,15 @@ a {
   right: 0;
   bottom: 0;
 }
+@media (max-width: 500px) {
+
+  .anotherVisitor {
+    position: static;
+    width: 100%;
+    margin: auto;
+  }
+}
+
 #ad {
   background-color: rgba(0, 0, 0, 0.4);
   padding: 1em;
