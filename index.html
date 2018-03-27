@@ -3,59 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>boxel-y voxel-y thing</title>
-    <style media="screen">
-      body {
-        padding: 0;
-        margin: 0;
-        overflow: hidden;
-        background-color: rgb(135, 165, 255);
-        font-family: monospace;
-      }
-      #overlay {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        font-family: sans-serif;
-        font-size: 9pt;
-        color: #ddd;
-      }
-      a {
-        color: #242;
-      }
-      #cross {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        margin: auto auto;
-      }
-      .anotherVisitor {
-        color: #242;
-        margin: 50px auto;
-        width: 30em;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-      }
-      #ad {
-        background-color: rgba(0, 0, 0, 0.4);
-        padding: 1em;
-        border-radius: 10px;
-        color: #fff;
-        margin: 0 auto;
-        width: 30em;
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        height: 200;
-      }
-      #ad, #nowebgl2, #nomodule {
-        display: none;
-      }
-    </style>
+    <link rel="stylesheet" href="res/main.css" />
   </head>
   <body>
     <canvas width="800" height="500"></canvas>
@@ -83,35 +31,25 @@
         Go on, just for a minute!
       </p>
     </noscript>
-    <p id="nowebgl2" class="anotherVisitor">Welcome! This is WebGL2 experiment - the classic minecraft world.
-      But it's using JavaScript Native Modules and WebGL2 that it seems like your browser
-      doesn't support yet. Sorry! Have a look at the code if you're that way inclined. WegGL2 is
-      pretty fun.
+    <p id="nosupport" class="anotherVisitor">Welcome! This is WebGL2 experiment - the classic minecraft world.
+      But it's using features (<span id="nomodule">
+      <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import">JavaScript
+        Native Modules</a></span><span id="nowebgl2">WebGL2</span>)
+      that it seems like your browser doesn't support yet.<br/><br/>
+      <a href="https://github.com/mrspeaker/webgl2-voxels">Have a look at the code</a>
+      if you're that way inclined. WegGL2 is pretty fun.
     </p>
-    <p id="nomodule" class="anotherVisitor">Welcome! This is WebGL2 experiment - the classic minecraft world.
-      But it's using JavaScript Native Modules that it seems like your browser
-      doesn't support yet. Sorry! Have a look at the code if you're that way inclined. WegGL2 is
-      pretty fun.
-    </p>
-
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97947162-2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
+      function gtag() { dataLayer.push(arguments); }
       gtag("js", new Date());
       gtag("config", "UA-97947162-2");
     </script>
 
     <script nomodule>
-      document.querySelector("#nomodule").style.display = "block";
-      window.gtag && window.gtag("event", "Browser", {
-        event_category: "Browser",
-        event_action: "support",
-        event_label: "no-module",
-        non_interaction: true
-      });
+      document.querySelector("#nosupport").style.display = "block";
+      document.querySelector("#nomodule").style.display = "inline";
     </script>
   </body>
 </html>

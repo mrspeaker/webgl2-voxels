@@ -1,0 +1,54 @@
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background-color: rgb(135, 165, 255);
+  font-family: monospace;
+}
+#overlay {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-family: sans-serif;
+  font-size: 9pt;
+  color: #ddd;
+}
+a {
+  color: #242;
+}
+#cross {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto auto;
+}
+.anotherVisitor {
+  color: #242;
+  margin: 50px auto;
+  width: 30em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+#ad {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 1em;
+  border-radius: 10px;
+  color: #fff;
+  margin: 0 auto;
+  width: 30em;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  height: 200;
+}
+#ad,
+#nosupport,
+#nowebgl2,
+#nomodule {
+  display: none;
+}

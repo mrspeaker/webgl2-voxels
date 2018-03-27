@@ -14,12 +14,11 @@ import Ray from "../lib/Ray.js";
 import glUtils from "../lib/glUtils.js";
 
 import digAndBuild from "./digAndBuild.js";
-import goog from "./goog.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");
 if (!gl) {
-  document.querySelector("#nowebgl2").style.display = "block";
-  goog.noWebGL2();
+  document.querySelector("#nosupport").style.display = "block";
+  document.querySelector("#nowebgl2").style.display = "inline";
 }
 glUtils.fitScreen(gl);
 gl.canvas.onclick = () => gl.canvas.requestPointerLock();
@@ -142,14 +141,12 @@ function loopy(t, last = t, state) {
   if (controls.keys.isDown(69)) {
     if (Date.now() - state.lastGen > 1000) {
       regenWorld();
-      goog.newWorld();
     }
   }
 
   if (controls.keys.isDown(66)) {
     controls.keys.keys[66] = false;
     window.location.href = "http://www.mrspeaker.net/html5-games-book/";
-    goog.lookBook();
   }
 
   // Get block player is looking at
@@ -190,7 +187,14 @@ function loopy(t, last = t, state) {
 
   debugShader
     .activate()
-    .preRender("camera", camera.view, "colour", [1.0, 1.0, 0.0, 0.1], "useTex", 0.0)
+    .preRender(
+      "camera",
+      camera.view,
+      "colour",
+      [1.0, 1.0, 0.0, 0.1],
+      "useTex",
+      0.0
+    )
     .render(cursor)
     .setUniforms("colour", [1, 1, 1, 0.1], "tex", 0, "useTex", 1.0)
     .render(world.ad.renderable);
