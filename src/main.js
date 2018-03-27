@@ -13,6 +13,8 @@ import Cube from "./models/Cube.js";
 import Ray from "../lib/Ray.js";
 import glUtils from "../lib/glUtils.js";
 
+import testSocket from "./testSocket.js";
+
 import digAndBuild from "./digAndBuild.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");
@@ -57,7 +59,8 @@ const state = {
 // MAIN
 preload()
   .then(initialize)
-  .then(() => requestAnimationFrame(t => loopy(t, t, state)));
+  .then(() => requestAnimationFrame(t => loopy(t, t, state)))
+  .then(testSocket);
 
 function preload() {
   const loadImg = src =>
