@@ -1,32 +1,51 @@
-const express = require("express");
-const app = express();
 const WebSocketServer = require("ws").Server;
-const wss = new WebSocketServer({ port: 40401 });
+const port = 40401;
+const wss = new WebSocketServer({ port });
 
-app.get("/", (req, res) => {
-  res.sendFile("index.html", { root: "../" });
-});
-app.get("/env", (req, res) => {
-  res.sendFile("index.html", { root: "../" });
-});
-
-app.use("/src", express.static(__dirname + "/../src/"));
-app.use("/res", express.static(__dirname + "/../res/"));
-app.use("/lib", express.static(__dirname + "/../lib/"));
-app.use("/vendor", express.static(__dirname + "/../vendor/"));
-app.use("/env.js", express.static(__dirname + "/../env.js"));
-
-app.listen(3000, () => {
-  console.log("listening on 3000");
+const makePlayer = () => ({
+  pos: [0, 0, 0],
+  acc: [],
+  vel: [],
+  w: 0.6,
+  h: 1.7,
+  speed: 6
 });
 
-wss.on("connection", ws => {
-  ws.on("message", msg => {
-    console.log("received: %s", msg);
+async function go() {
+  const state = await loadState();
+  console.log(state);
+  tick(state);
+
+  console.log("loaded, awaiting connections on port", port);
+  wss.on("connection", ws => {
+    console.log("connected");
+    const p = makePlayer();
+    p.ws = ws;
+    state.players.push(p);
+
+    ws.on("message", msg => {
+      console.log("received: %s", msg);
+      if (msg === "w") {
+        p.pos[2] -= 0.1;
+      }
+    });
   });
-  setInterval(() => {
+}
+
+go();
+
+function tick(state) {
+  state.players.forEach(p => {
+    const {ws, pos} = p;
     if (ws.readyState === ws.OPEN) {
-      ws.send(`${Date.now()}`);
+      ws.send(JSON.stringify(pos));
     }
-  }, 1000);
-});
+  });
+  setTimeout(() => tick(state), 1000);
+}
+
+async function loadState() {
+  return Promise.resolve({
+    players: []
+  });
+}

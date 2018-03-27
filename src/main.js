@@ -12,10 +12,9 @@ import Player from "./Player.js";
 import Cube from "./models/Cube.js";
 import Ray from "../lib/Ray.js";
 import glUtils from "../lib/glUtils.js";
-
-import testSocket from "./testSocket.js";
-
 import digAndBuild from "./digAndBuild.js";
+
+import Network from "./Network.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");
 if (!gl) {
@@ -26,6 +25,7 @@ glUtils.fitScreen(gl);
 gl.canvas.onclick = () => gl.canvas.requestPointerLock();
 window.addEventListener("resize", () => glUtils.fitScreen(gl), false);
 const deb1 = document.querySelector("#deb1");
+const deb2 = document.querySelector("#deb2");
 const ad1 = document.querySelector("#ad");
 
 const camera = new Camera(gl);
@@ -56,11 +56,16 @@ const state = {
   lastGen: Date.now()
 };
 
+// DOn't mind me - just playing around.
+let network;
+
 // MAIN
 preload()
   .then(initialize)
   .then(() => requestAnimationFrame(t => loopy(t, t, state)))
-  .then(testSocket);
+  .then(() => (network = new Network((data) => {
+    deb2.innerText = data;
+  })));
 
 function preload() {
   const loadImg = src =>
@@ -124,6 +129,11 @@ function loopy(t, last = t, state) {
 
   player.update(dt);
   world.update(dt);
+
+  // Don't mind me, just messing around.
+  if (controls.keys.isDown(87 /*w*/)) {
+    network && network.send("w");
+  }
 
   const { pos } = player;
 
