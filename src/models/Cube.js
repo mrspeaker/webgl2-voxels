@@ -1,5 +1,5 @@
 import Model from "./Model.js";
-import glUtils from "../lib/glUtils.js";
+import glUtils from "../../lib/glUtils.js";
 
 class Cube {
   static create(gl, name = "Cube", w, h, d, x, y, z) {

@@ -1,4 +1,4 @@
-import glUtils from "../lib/glUtils.js";
+import glUtils from "../../lib/glUtils.js";
 
 class Shader {
   constructor(gl, vs, fs) {

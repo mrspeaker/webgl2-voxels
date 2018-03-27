@@ -1,4 +1,4 @@
-import Transform from "../lib/Transform.js";
+import Transform from "../../lib/Transform.js";
 
 class Model extends Transform {
   constructor(mesh) {

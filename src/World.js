@@ -1,5 +1,5 @@
-import ChunkModel from "../models/ChunkModel.js";
-import Cube from "../models/Cube.js";
+import ChunkModel from "./models/ChunkModel.js";
+import Cube from "./models/Cube.js";
 
 import Chunk from "./Chunk.js";
 
