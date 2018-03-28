@@ -4,7 +4,9 @@ By [@mrspeaker](https://www.twitter.com/mrspeaker). It's a voxel-boxel-o-rama! [
 
 [![webgl2 voxels](https://user-images.githubusercontent.com/129330/37849134-edc55686-2eac-11e8-88e4-317d98fc3b9c.png)](https://mrspeaker.github.io/webgl2-voxels)
 
-There's no goal or anything at the moment - just rendering some chunks (with some nice ambient occlusion). This experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.youtube.com/channel/UCSnyjB_8iVxi2ZAfn_1L6tA).
+There's no goal or anything at the moment - just rendering some chunks (with some nice ambient occlusion). I think I'll make it a multiplayer fortnite-y thing. But more voxel-ish and most likely more weird.
+
+This experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https://www.youtube.com/channel/UCSnyjB_8iVxi2ZAfn_1L6tA). It's a great series.
 
 * WASD move (or ZQSD for france)
 * SPACE jump (hold to "fly")
