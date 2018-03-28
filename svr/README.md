@@ -9,7 +9,7 @@ npm start
 
 # serve app
 
-Don't need to do this at the moment: it runs fine without being served.
+Thanks to ES modules, you don't need to do this at the moment: it runs fine without being served. But if you want to:
 
 ```
 node frontend.js
