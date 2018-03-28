@@ -24,7 +24,7 @@ async function go() {
     state.players.push(p);
 
     ws.on("message", msg => {
-      console.log("received: %s", msg);
+      //console.log("received: %s", msg);
       if (msg === "w") {
         p.pos[2] -= 0.1;
       }
