@@ -1,5 +1,5 @@
 import m4 from "../vendor/m4.js";
-import Transform from "../lib/Transform.js";
+import Transform from "./math/Transform.js";
 
 class Camera {
   constructor(gl, fov = 45, near = 0.1, far = 300.0) {

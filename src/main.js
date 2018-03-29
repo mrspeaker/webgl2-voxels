@@ -10,8 +10,8 @@ import Camera from "./Camera.js";
 import World from "./World.js";
 import Player from "./Player.js";
 import Cube from "./models/Cube.js";
-import Ray from "../lib/Ray.js";
-import glUtils from "../lib/glUtils.js";
+import Ray from "./math/Ray.js";
+import glUtils from "./glUtils.js";
 import digAndBuild from "./digAndBuild.js";
 
 const gl = document.querySelector("canvas").getContext("webgl2");

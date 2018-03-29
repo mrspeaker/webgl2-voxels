@@ -1,6 +1,6 @@
 import Model from "./Model.js";
 import Chunk from "../Chunk.js";
-import glUtils from "../../lib/glUtils.js";
+import glUtils from "../glUtils.js";
 
 class ChunkModel extends Model {
   constructor(gl, chunk) {
