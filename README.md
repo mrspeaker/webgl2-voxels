@@ -14,11 +14,3 @@ This experiment inspired by the excellent [SketchpunkLabs WebGL2 series](https:/
 * Left click: add block
 * Shift click: delete block
 * Right click: destructo mode!
-
-## TODO
-
-* Fix ambient Occlusion on chunk borders
-* Fix texture seams
-* Fix jumping (double tap to fly)
-* Move skybox with player
-* Camera clips when jumping and looking up
